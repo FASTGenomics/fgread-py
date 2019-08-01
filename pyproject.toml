@@ -8,4 +8,5 @@ author = "Paweł Biernat"
 author-email = "pawel.biernat@comma-soft.de"
 requires=[
     "scanpy",
+    'get_version (~=2.0.1)'
 ]
