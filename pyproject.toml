@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "readfg"
+author = "Paweł Biernat"
+author-email = "pawel.biernat@comma-soft.de"
+requires=[
+    "scanpy",
+]
