@@ -4,9 +4,12 @@ build-backend = "flit.buildapi"
 
 [tool.flit.metadata]
 module = "readfg"
-author = "Paweł Biernat"
-author-email = "pawel.biernat@comma-soft.de"
+author = "FASTGenomics Team"
+author-email = "contact@fastgenomics.org"
+description-file = 'README.md'
+home-page = 'https://github.com/fastgenomics/jupyter-fgread-py'
+requires-python = '~=3.6'
 requires=[
     "scanpy",
-    'get_version (~=2.0.1)'
+    'get_version (~=2.0.6)'
 ]
