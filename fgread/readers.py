@@ -1,4 +1,4 @@
-import scanpy as sc
+import anndata
 import re
 import numpy as np
 import pandas as pd
@@ -8,7 +8,7 @@ import scipy.sparse as sp
 def read_loom(dataset):
     """Reads a data set in the loom format."""
 
-    adata = sc.read_loom(dataset.file)
+    adata = anndata.read_loom(dataset.file)
     return adata
 
 
@@ -21,14 +21,14 @@ def read_seurat(dataset):
 def read_anndata(dataset):
     """Reads a data set in the AnnData format."""
 
-    adata = sc.read_h5ad(dataset.file)
+    adata = anndata.read_h5ad(dataset.file)
     return adata
 
 
 def read_10x_hdf5(dataset):
     """Reads a data set in the 10x hdf5 format."""
 
-    adata = sc.read_10x_h5(dataset.file)
+    adata = anndata.read_10x_h5(dataset.file)
     return adata
 
 
@@ -58,5 +58,5 @@ def read_dropseq(dataset):
         samples, columns=["sample"], index=pd.Series(cells, name="CellID")
     )
 
-    adata = sc.AnnData(X=X, var=var, obs=obs)
+    adata = anndata.AnnData(X=X, var=var, obs=obs)
     return adata
