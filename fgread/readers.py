@@ -1,41 +1,41 @@
 import scanpy as sc
-import json
 import re
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
 
-def read_manifest(dataset_dir):
-    with open(dataset_dir / "manifest.json") as f:
-        return json.load(f)
+def read_loom(dataset):
+    """Reads a data set in the loom format."""
 
-
-def read_loom(dataset_dir):
-    adata = sc.read_loom(dataset_dir / "data.loom")
-    adata.uns["manifest"] = read_manifest(dataset_dir)
+    adata = sc.read_loom(dataset.file)
     return adata
 
 
-def read_seurat(dataset_dir):
+def read_seurat(dataset):
+    """Reads a data set in the Seurat format (not implemented)."""
+
     raise NotImplementedError("Reading of Seurat files not implemented.")
 
 
-def read_anndata(dataset_dir):
-    adata = sc.read_h5ad(dataset_dir / "data.h5ad")
-    adata.uns["manifest"] = read_manifest(dataset_dir)
+def read_anndata(dataset):
+    """Reads a data set in the AnnData format."""
+
+    adata = sc.read_h5ad(dataset.file)
     return adata
 
 
-def read_10x_hdf5(dataset_dir):
-    adata = sc.read_10x_h5(dataset_dir / "data.h5")
-    adata.uns["manifest"] = read_manifest(dataset_dir)
+def read_10x_hdf5(dataset):
+    """Reads a data set in the 10x hdf5 format."""
+
+    adata = sc.read_10x_h5(dataset.file)
     return adata
 
 
-def read_dropseq(dataset_dir):
+def read_dropseq(dataset):
+    """Reads a data set in the DropSeq format."""
 
-    file = dataset_dir / "data.tsv"
+    file = dataset.file
 
     with open(file) as f:
         cells = f.readline().replace('"', "").split("\t")
@@ -59,5 +59,4 @@ def read_dropseq(dataset_dir):
     )
 
     adata = sc.AnnData(X=X, var=var, obs=obs)
-    adata.uns["manifest"] = read_manifest(dataset_dir)
     return adata

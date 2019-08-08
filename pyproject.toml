@@ -3,7 +3,7 @@ requires = ["flit"]
 build-backend = "flit.buildapi"
 
 [tool.flit.metadata]
-module = "readfg"
+module = "fgread"
 author = "FASTGenomics Team"
 author-email = "contact@fastgenomics.org"
 description-file = 'README.md'
