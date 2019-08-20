@@ -55,7 +55,7 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     if format in readers:
         print(
-            f'Loading data set "{title}" in format "{format} from directory "{path}".'
+            f'Loading data set "{title}" in format "{format}" from directory "{path}".'
         )
         adata = readers[format](dataset)
         adata.uns["metadata"] = dataset.metadata
