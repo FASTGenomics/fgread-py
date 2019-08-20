@@ -13,6 +13,9 @@ requires=[
     "anndata >= 0.6",
     'get_version (~=2.0.6)'
 ]
+
+
+[tool.flit.metadata.requires-extra]
 test = [
     "get_version (~=2.0.6)",
     "pytest >= 4",
