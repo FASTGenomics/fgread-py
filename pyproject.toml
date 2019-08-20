@@ -11,13 +11,15 @@ home-page = 'https://github.com/fastgenomics/jupyter-fgread-py'
 requires-python = '~=3.6'
 requires=[
     "anndata >= 0.6",
-    'get_version (~=2.0.6)'
+    'get_version (~=2.0.6)',
+    "tables >= 3.4"
 ]
 
 
 [tool.flit.metadata.requires-extra]
 test = [
+    "anndata >= 0.6",
     "get_version (~=2.0.6)",
-    "pytest >= 4",
-    "anndata >= 0.6"
+    "tables >= 3.4",
+    "pytest >= 4"
 ]
