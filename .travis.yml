@@ -3,5 +3,4 @@ python: "3.6"
 install:
   - pip install flit
   - flit install --deps develop
-script:
-  - pytest
+script: pytest
