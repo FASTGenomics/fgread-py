@@ -3,6 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
+from .scanpy_read_10x import read_10x_h5
 
 
 def read_loom_to_anndata(dataset):
@@ -28,7 +29,9 @@ def read_anndata_to_anndata(dataset):
 def read_10xhdf5_to_anndata(dataset):
     """Reads a data set in the 10x hdf5 format."""
 
-    adata = anndata.read_10x_h5(dataset.file)
+    # todo replace with anndata.read_10x_h5 once read_10x_h5 is moved to anndata (if
+    # ever)
+    adata = read_10x_h5(dataset.file)
     return adata
 
 
