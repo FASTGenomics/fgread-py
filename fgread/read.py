@@ -4,14 +4,15 @@ import json
 from . import readers
 
 DEFAULT_READERS = {
-    "Loom": readers.read_loom,
-    "Seurat Object": readers.read_seurat,
-    "AnnData": readers.read_anndata,
-    "10x h5": readers.read_10x_hdf5,
-    "Drop-Seq": readers.read_dropseq,
+    "Loom": readers.read_loom_to_anndata,
+    "Seurat Object": readers.read_seurat_to_anndata,
+    "AnnData": readers.read_anndata_to_anndata,
+    "10x (hdf5)": readers.read_10xhdf5_to_anndata,
+    "Drop-Seq (tsv)": readers.read_dropseq_to_anndata,
 }
 
 DATA_DIR = "/fastgenomics/data"
+DATASET_INFO_FILE = "dataset_info.json"
 
 
 class DataSet(object):
@@ -33,14 +34,14 @@ contents of the metadata.json file.
         self.id = int(self.path.name.split("_")[-1])
 
     def read_metadata(self):
-        with open(self.path / "metadata.json") as f:
+        with open(self.path / DATASET_INFO_FILE) as f:
             return json.load(f)
 
     def __repr__(self):
         return f"DataSet: {self.title} [{self.format}]"
 
 
-def read_data_set(dataset: DataSet, additional_readers={}):
+def read_dataset(dataset: DataSet, additional_readers={}):
     """Reads a single data set.  Dispatches to specific readers based on the contents of the
 `dataset.format`.
 
@@ -65,7 +66,7 @@ def read_data_set(dataset: DataSet, additional_readers={}):
         raise KeyError(f'Unsupported format "{format}", use one of {readers}')
 
 
-def list_data_sets(data_dir=DATA_DIR):
+def list_datasets(data_dir=DATA_DIR):
     """Lists available data sets."""
 
     data_dir = Path(data_dir)
@@ -77,11 +78,11 @@ def list_data_sets(data_dir=DATA_DIR):
     return {dataset.id: dataset for dataset in map(DataSet, paths)}
 
 
-def read_data_sets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
+def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
     """Reads all data sets."""
 
-    datasets = datasets or list_data_sets(data_dir)
+    datasets = datasets or list_datasets(data_dir)
     return {
-        id: read_data_set(dataset, additional_readers=additional_readers)
+        id: read_dataset(dataset, additional_readers=additional_readers)
         for id, dataset in datasets.items()
     }
