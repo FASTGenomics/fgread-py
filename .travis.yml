@@ -1,6 +1,6 @@
 language: python
 python: "3.6"
 install:
-  - pip install flit
+  - pip install flit future-fstrings
   - flit install --symlink --extras test
-script: python3 -m pytest
+script: pytest
