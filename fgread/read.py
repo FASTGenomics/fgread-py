@@ -53,7 +53,15 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     readers = {**DEFAULT_READERS, **additional_readers}
 
-    if format in readers:
+    if format == "Other":
+        raise NotImplementedError(
+            f'The format of the data set "{title}" is "{format}".  Data sets with the "{format}" format are unsupported by this module and have to be loaded manually.'
+        )
+    elif format == "Not set":
+        raise KeyError(
+            f'The format of the data set "{title}" was not defined.  If you can modify the data set please specify its format in its Details page, otherwise ask the data set owner to do that.'
+        )
+    elif format in readers:
         print(
             f'Loading data set "{title}" in format "{format}" from directory "{path}".'
         )

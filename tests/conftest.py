@@ -20,6 +20,12 @@ DATASET_SEURAT = dict(
     id=2, dim=(1222, 33538), title="Seurat Object data set", format="Seurat Object"
 )
 
+# special treatment for the unsupported seurat object
+DATASET_OTHER = dict(id=6, title="Other data set", format="Other")
+
+# special treatment for the unsupported seurat object
+DATASET_NOTSET = dict(id=7, title="Not set data set", format="Not set")
+
 
 @pytest.fixture
 def data_dir():
@@ -41,3 +47,15 @@ def dset(request):
 @pytest.fixture
 def dset_seurat():
     return DATASET_SEURAT
+
+
+# The other data set
+@pytest.fixture
+def dset_other():
+    return DATASET_OTHER
+
+
+# The notset data set
+@pytest.fixture
+def dset_notset():
+    return DATASET_NOTSET
