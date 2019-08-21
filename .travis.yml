@@ -2,5 +2,5 @@ language: python
 python: "3.6"
 install:
   - pip install flit
-  - flit install --deps develop
+  - flit install --symlink --extras test
 script: python3 -m pytest
