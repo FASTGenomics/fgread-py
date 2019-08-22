@@ -32,6 +32,7 @@ def data_dir():
     return DATA_DIR
 
 
+# a list of all data sets
 @pytest.fixture()
 def list_datasets(data_dir):
     return fgread.list_datasets(data_dir)

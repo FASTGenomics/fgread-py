@@ -38,7 +38,14 @@ contents of the metadata.json file.
             return json.load(f)
 
     def __repr__(self):
-        return f"DataSet: {self.title} [{self.format}]"
+        return "\n".join(
+            [
+                f"id: {self.id}",
+                f"title: {self.title}",
+                f"format: {self.format}",
+                f"path: {self.path}",
+            ]
+        )
 
 
 def read_dataset(dataset: DataSet, additional_readers={}):
