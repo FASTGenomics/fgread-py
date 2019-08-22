@@ -35,7 +35,7 @@ def read_10xhdf5_to_anndata(dataset):
     return adata
 
 
-def read_dropseq_to_anndata(dataset):
+def read_dropseqtsv_to_anndata(dataset):
     """Reads a data set in the DropSeq format."""
 
     file = dataset.file
