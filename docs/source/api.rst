@@ -1,11 +1,11 @@
 Reading data from FASTGenomics
 ==============================
 
-.. autofunction:: fgread.list_data_sets
+.. autofunction:: fgread.list_datasets
 
-.. autofunction:: fgread.read_data_set
+.. autofunction:: fgread.read_dataset
 
-.. autofunction:: fgread.read_data_sets
+.. autofunction:: fgread.read_datasets
 
 
 Readers for supported formats
