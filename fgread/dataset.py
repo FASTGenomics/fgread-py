@@ -6,8 +6,10 @@ DATASET_INFO_FILE = "dataset_info.json"
 
 class DataSet(object):
     """Represents a data set on FASTGenomics, including the relative location and the
-contents of the ``metadata.json`` file.
+    contents of the ``metadata.json`` file.
 
+    :param path: absolute path to a data set folder, for example
+        ``/fastgenomics/data/dataset_0001``
     """
 
     def __init__(self, path: str):
