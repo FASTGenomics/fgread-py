@@ -4,29 +4,30 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 from .scanpy_read_10x import read_10x_h5
+from .dataset import DataSet
 
 
-def read_loom_to_anndata(dataset):
+def read_loom_to_anndata(dataset: DataSet):
     """Reads a data set in the loom format."""
 
     adata = anndata.read_loom(dataset.file)
     return adata
 
 
-def read_seurat_to_anndata(dataset):
+def read_seurat_to_anndata(dataset: DataSet):
     """Reads a data set in the Seurat format (not implemented)."""
 
     raise NotImplementedError("Reading of Seurat files not implemented.")
 
 
-def read_anndata_to_anndata(dataset):
+def read_anndata_to_anndata(dataset: DataSet):
     """Reads a data set in the AnnData format."""
 
     adata = anndata.read_h5ad(dataset.file)
     return adata
 
 
-def read_10xhdf5_to_anndata(dataset):
+def read_10xhdf5_to_anndata(dataset: DataSet):
     """Reads a data set in the 10x hdf5 format."""
 
     # todo replace with anndata.read_10x_h5 once read_10x_h5 is moved to anndata (if
@@ -35,7 +36,7 @@ def read_10xhdf5_to_anndata(dataset):
     return adata
 
 
-def read_dropseqtsv_to_anndata(dataset):
+def read_dropseqtsv_to_anndata(dataset: DataSet):
     """Reads a data set in the DropSeq format."""
 
     file = dataset.file
