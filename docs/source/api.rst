@@ -1,7 +1,11 @@
-Reading data from FASTGenomics
+API
 ==============================
 
+Reading data in FASTGenomics
+-----------------------------
 .. autofunction:: fgread.list_datasets
+
+.. autoclass:: fgread.read.DataSet
 
 .. autofunction:: fgread.read_dataset
 

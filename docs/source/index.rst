@@ -1,9 +1,11 @@
-Welcome to FASTGenomics data set reader for scanpy's documentation!
-===================================================================
+.. toctree::
+   :maxdepth: 1
+   :caption: Description:
 
+   intro
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: API:
 
    api

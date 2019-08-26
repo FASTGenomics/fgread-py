@@ -48,6 +48,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
+    "recommonmark",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -56,8 +57,7 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = [".rst", ".md"]
 
 # The master toctree document.
 master_doc = "index"
@@ -91,17 +91,17 @@ napoleon_custom_sections = [("Params", "Parameters")]
 
 
 html_theme = "sphinx_rtd_theme"
-html_theme_options = dict(navigation_depth=4, logo_only=True)  # Only show the logo
+html_theme_options = dict(navigation_depth=2, logo_only=True)  # Only show the logo
 html_context = dict(
     display_github=True,  # Integrate GitHub
     github_user="fastgenomics",  # Username
-    github_repo="jupyter-fgread-py",  # Repo name
+    github_repo="fgread-py",  # Repo name
     github_version="master",  # Version
     conf_py_path="/docs/source/",  # Path in the checkout to the docs root
 )
 html_static_path = ["_static"]
 html_show_sphinx = False
-html_logo = "_static/img/logo.png"
+html_logo = "_static/img/logo-header.svg"
 gh_url = "https://github.com/{github_user}/{github_repo}".format_map(html_context)
 
 # -- Options for HTMLHelp output ---------------------------------------------
@@ -162,3 +162,7 @@ epub_exclude_files = ["search.html"]
 
 
 # -- Extension configuration -------------------------------------------------
+
+
+def setup(app):
+    app.add_stylesheet("css/custom.css")
