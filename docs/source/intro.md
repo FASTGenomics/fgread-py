@@ -10,13 +10,13 @@ will let you list and load data sets for which the analysis was defined.
 ## Supported formats
 
 The following formats are supported by this package
-- AnnData
-- Loom
-- CellRanger (hdf5)
-- Drop-Seq (tsv)
+- [AnnData](https://github.com/theislab/anndata)
+- [CellRanger (hdf5)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices)
+- [Drop-Seq (tsv)](https://github.com/Hoohm/dropSeqPipe/)
+- [Loom](http://loompy.org/)
 
 Currently unsupported
-- Seurat Object
+- [Seurat Object](https://satijalab.org/seurat/)
 
 # Usage
 
