@@ -45,8 +45,8 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         )
         adata = readers[format](dataset)
         adata.uns["metadata"] = dataset.metadata
-        adata.var["fg_title"] = dataset.title
-        adata.var["fg_id"] = dataset.id
+        adata.obs["fg_title"] = dataset.title
+        adata.obs["fg_id"] = dataset.id
         return adata
     else:
         raise KeyError(f'Unsupported format "{format}", use one of {readers}')
