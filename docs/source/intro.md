@@ -5,7 +5,7 @@ This package implements convenience functions for loading data sets in the
 will let you list and load data sets for which the analysis was defined.
 
 [fg]: https://beta.fastgenomics.org/webclient/
-[fg]: https://beta.fastgenomics.org/webclient/searchPage/analyses
+[fg_analysis]: https://beta.fastgenomics.org/webclient/searchPage/analyses
 
 ## Supported formats
 
