@@ -3,7 +3,10 @@ API
 
 Printing available datasets
 ---------------------------
+
 .. autofunction:: fgread.print_datasets
+
+
 
 Reading data in FASTGenomics
 -----------------------------
