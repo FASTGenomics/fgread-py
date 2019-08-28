@@ -3,7 +3,7 @@ API
 
 Reading data in FASTGenomics
 -----------------------------
-.. autofunction:: fgread.list_datasets
+.. autofunction:: fgread.get_datasets
 
 .. autofunction:: fgread.read_dataset
 

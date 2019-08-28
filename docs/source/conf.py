@@ -23,7 +23,7 @@ import fgread
 
 # -- Project information -----------------------------------------------------
 
-project = "FASTGenomics data set reader for scanpy"
+project = "FASTGenomics dataset reader for scanpy"
 author = fgread.__author__
 copyright = f"{datetime.now():%Y}, {author}."
 
@@ -118,7 +118,7 @@ man_pages = [
     (
         master_doc,
         "fastgenomicsdatasetreaderforscanpy",
-        "FASTGenomics data set reader for scanpy Documentation",
+        "FASTGenomics dataset reader for scanpy Documentation",
         [author],
         1,
     )
@@ -134,7 +134,7 @@ texinfo_documents = [
     (
         master_doc,
         "FASTGenomicsdatasetreaderforscanpy",
-        "FASTGenomics data set reader for scanpy Documentation",
+        "FASTGenomics dataset reader for scanpy Documentation",
         author,
         "FASTGenomicsdatasetreaderforscanpy",
         "One line description of project.",

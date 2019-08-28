@@ -1,8 +1,8 @@
 # Intro
 
-This package implements convenience functions for loading data sets in the
+This package implements convenience functions for loading datasets in the
 [FASTGenomics][fg] [analysis][fg_analysis] environment.  The functions from this package
-will let you list and load data sets for which the analysis was defined.
+will let you list and load datasets for which the analysis was defined.
 
 [fg]: https://beta.fastgenomics.org/webclient/
 [fg_analysis]: https://beta.fastgenomics.org/webclient/searchPage/analyses
@@ -26,59 +26,59 @@ Start by importing the module with
 import fgread
 ```
 
-## Listing data sets
+## Listing datasets
 
-To list the data sets simply call the `fgread.list_datasets` function
+To list the datasets simply call the `fgread.get_datasets` function
 
 ``` R
-dsets_list = fgread.list_datasets()
+dsets_list = fgread.get_datasets()
 ```
 
 The `dsets_list` would then contain the information about the location, format, title,
-etc. about each data set.
+etc. about each dataset.
 
 ```
 {1: id: 1
- title: Loom data set
+ title: Loom dataset
  format: Loom
  path: ../tests/data/readers/dataset_0001,
  2: id: 2
- title: AnnData data set
+ title: AnnData dataset
  format: AnnData
  path: ../tests/data/readers/dataset_0002
 }
 ```
 
-Note, that `fgread.list_datasets()` does not load any of the data sets.  It's purpose
-is to get a list of available data sets, from which you can select the ones you would
+Note, that `fgread.get_datasets()` does not load any of the datasets.  It's purpose
+is to get a list of available datasets, from which you can select the ones you would
 like to load.
 
-## Loading a single data set
+## Loading a single dataset
 
-To load a single data set use `fgread.read_dataset`.  The code below loads the first
-data set from the list (the "Loom data set") and returns an [AnnData][anndata] object
+To load a single dataset use `fgread.read_dataset`.  The code below loads the first
+dataset from the list (the "Loom dataset") and returns an [AnnData][anndata] object
 
 ``` R
 adata = fgread.read_dataset(dsets_list[1])
 ```
 
-To load the second data set simply run
+To load the second dataset simply run
 
 ``` R
 adata = fgread.read_dataset(dsets_list[2])
 ```
 
-The `fgread.read_dataset` function resolves the underlying format of the data set
+The `fgread.read_dataset` function resolves the underlying format of the dataset
 automatically, based on the `format` attributes contained in the `dsets_list[1]`.
 
 [anndata]: https://anndata.readthedocs.io/en/stable/
 
-## Loading multiple data sets
+## Loading multiple datasets
 
-Similarly, one can load multiple data sets with a single command: `fgread.read_datasets`
-(note the `s` at the end).  The command loads all available data sets into _separate_
+Similarly, one can load multiple datasets with a single command: `fgread.read_datasets`
+(note the `s` at the end).  The command loads all available datasets into _separate_
 anndata objects and returns a list of these objects (where the indices correspond to the
-indices from `fgread.list_datasets`).
+indices from `fgread.get_datasets`).
 
 ``` R
 dsets = fgread.read_datasets(dsets_list)
@@ -97,7 +97,7 @@ Now the `dsets` is a list containing two anndata objects
 }
 ```
 
-Used without any arguments `fgread.read_datasets()` loads all data sets
+Used without any arguments `fgread.read_datasets()` loads all datasets
 
 ``` R
 dsets = fgread.read_datasets()

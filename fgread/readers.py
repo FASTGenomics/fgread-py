@@ -8,27 +8,27 @@ from .dataset import DataSet
 
 
 def read_loom_to_anndata(dataset: DataSet):
-    """Reads a data set in the loom format into the AnnData format."""
+    """Reads a dataset in the loom format into the AnnData format."""
 
     adata = anndata.read_loom(dataset.file)
     return adata
 
 
 def read_seurat_to_anndata(dataset: DataSet):
-    """Reads a data set in the Seurat format into the AnnData format (not implemented)."""
+    """Reads a dataset in the Seurat format into the AnnData format (not implemented)."""
 
     raise NotImplementedError("Reading of Seurat files not implemented.")
 
 
 def read_anndata_to_anndata(dataset: DataSet):
-    """Reads a data set in the AnnData format into the AnnData format."""
+    """Reads a dataset in the AnnData format into the AnnData format."""
 
     adata = anndata.read_h5ad(dataset.file)
     return adata
 
 
 def read_10xhdf5_to_anndata(dataset: DataSet):
-    """Reads a data set in the 10x hdf5 format into the AnnData format."""
+    """Reads a dataset in the 10x hdf5 format into the AnnData format."""
 
     # todo replace with anndata.read_10x_h5 once read_10x_h5 is moved to anndata (if
     # ever)
@@ -37,7 +37,7 @@ def read_10xhdf5_to_anndata(dataset: DataSet):
 
 
 def read_dropseqtsv_to_anndata(dataset: DataSet):
-    """Reads a data set in the DropSeq format into the AnnData format."""
+    """Reads a dataset in the DropSeq format into the AnnData format."""
 
     file = dataset.file
 

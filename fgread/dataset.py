@@ -5,10 +5,10 @@ DATASET_INFO_FILE = "dataset_info.json"
 
 
 class DataSet(object):
-    """Represents a data set on FASTGenomics, including the relative location and the
+    """Represents a dataset on FASTGenomics, including the relative location and the
     contents of the ``metadata.json`` file.
 
-    :param path: absolute path to a data set folder, for example
+    :param path: absolute path to a dataset folder, for example
         ``/fastgenomics/data/dataset_0001``
     """
 
@@ -16,7 +16,7 @@ class DataSet(object):
         self.path = Path(path)
 
         if not self.path.exists():
-            raise FileNotFoundError(filename=self.path)
+            raise FileNotFoundError(self.path)
 
         self.metadata = self.read_metadata()
         self.format = self.metadata["format"]
@@ -29,11 +29,9 @@ class DataSet(object):
             return json.load(f)
 
     def __repr__(self):
-        return "\n".join(
-            [
-                f"id: {self.id}",
-                f"title: {self.title}",
-                f"format: {self.format}",
-                f"path: {self.path}",
-            ]
-        )
+        return f"""
+        id:     {self.id}
+        title:  {self.title}
+        format: {self.format}
+        path:   {self.path}
+        """
