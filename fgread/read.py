@@ -68,9 +68,9 @@ def get_datasets(data_dir=DATA_DIR):
 
     data_dir = Path(data_dir)
     paths = [
-        f
-        for f in data_dir.iterdir()
-        if f.is_dir() and re.match(r"^dataset_\d{4}$", f.name)
+        subdir
+        for subdir in data_dir.iterdir()
+        if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
     return {dataset.id: dataset for dataset in map(DataSet, paths)}
 
