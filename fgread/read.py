@@ -70,7 +70,7 @@ def get_datasets(data_dir=DATA_DIR):
     data_dir = Path(data_dir)
     paths = [
         subdir
-        for subdir in data_dir.iterdir()
+        for subdir in sorted(data_dir.iterdir())
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
     return OrderedDict({dataset.id: dataset for dataset in map(DataSet, paths)})
