@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 from . import readers
 from .dataset import DataSet
+from collections import OrderedDict
 
 DEFAULT_READERS = {
     "Loom": readers.read_loom_to_anndata,
@@ -72,7 +73,7 @@ def get_datasets(data_dir=DATA_DIR):
         for subdir in data_dir.iterdir()
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
-    return {dataset.id: dataset for dataset in map(DataSet, paths)}
+    return OrderedDict({dataset.id: dataset for dataset in map(DataSet, paths)})
 
 
 def print_datasets(data_dir=DATA_DIR):
