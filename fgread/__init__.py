@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""Module for reading files shared on FASTGenomics"""
+"""Module for reading datasets shared on FASTGenomics"""
 
 from .read import print_datasets, get_datasets, read_dataset, read_datasets
 
