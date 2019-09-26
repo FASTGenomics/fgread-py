@@ -42,23 +42,31 @@ def read_10xmtx_to_anndata(dataset: DataSet):
 
 
 def read_dropseqtsv_to_anndata(dataset: DataSet):
+    return read_dropseq_to_anndata(dataset, sep="\t")
+
+
+def read_dropseqcsv_to_anndata(dataset: DataSet):
+    return read_dropseq_to_anndata(dataset, sep=", ")
+
+
+def read_dropseq_to_anndata(dataset: DataSet, sep=None):
     """Reads a dataset in the DropSeq format into the AnnData format."""
 
     file = dataset.file
 
     with open(file) as f:
-        cells = f.readline().replace('"', "").split("\t")
+        cells = f.readline().replace('"', '').split(sep)
         # omit first element if it is empty
-        if (not cells[0].strip()) | (cells[0].lower()[:4]=='gene'):
+        if (not cells[0].strip()) | (cells[0].lower()[:4] == 'gene'):
             cells = cells[1:]
         samples = [re.search("(.*)_", c).group(1) for c in cells]
 
     genes = pd.read_csv(
-        file, sep="\t", skiprows=1, usecols=(0,), header=None, names=["GeneID"]
+        file, skiprows=1, usecols=(0,), header=None, names=["GeneID"]
     ).set_index("GeneID")
     X = np.loadtxt(
         file,
-        delimiter="\t",
+        delimiter=sep,
         skiprows=1,
         usecols=range(1, len(cells) + 1),
         dtype=np.float32,
