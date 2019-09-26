@@ -11,7 +11,7 @@ DATASETS = [
     dict(id=3, dim=(10, 20), title="AnnData dataset", format="AnnData"),
     dict(id=4, dim=(1222, 33538), title="10x (hdf5) dataset", format="10x (hdf5)"),
     dict(id=5, dim=(20000, 99), title="Drop-Seq (tsv) dataset", format="Drop-Seq (tsv)"),
-    dict(id=8, dim=(2700, 32738), title="3k PBMCs dataset", format="10x (mtx)"),
+    dict(id=8, dim=(30, 1000), title="mtx dataset", format="10x (mtx)"),
 ]
 
 # special treatment for the unsupported seurat object
