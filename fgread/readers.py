@@ -49,7 +49,7 @@ def read_dropseqtsv_to_anndata(dataset: DataSet):
     with open(file) as f:
         cells = f.readline().replace('"', "").split("\t")
         # omit first element if it is empty
-        if not cells[0]:
+        if (not cells[0].strip()) | (cells[0].lower()[:4]=='gene'):
             cells = cells[1:]
         samples = [re.search("(.*)_", c).group(1) for c in cells]
 
