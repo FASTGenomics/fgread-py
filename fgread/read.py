@@ -81,7 +81,7 @@ def get_datasets(data_dir=DATA_DIR):
 
 def print_datasets(data_dir=DATA_DIR):
     """prints the list of available datasets
-    
+
     :param data_dir: Specify the main data directory.  Useful for testing the module,
         defaults to the FASTGenomics path ``/fastgenomics/data``.
     """
