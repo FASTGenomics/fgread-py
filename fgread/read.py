@@ -9,6 +9,7 @@ DEFAULT_READERS = {
     "Seurat Object": readers.read_seurat_to_anndata,
     "AnnData": readers.read_anndata_to_anndata,
     "10x (hdf5)": readers.read_10xhdf5_to_anndata,
+    "10x (mtx)": readers.read_10xmtx_to_anndata,
     "Drop-Seq (tsv)": readers.read_dropseqtsv_to_anndata,
 }
 
