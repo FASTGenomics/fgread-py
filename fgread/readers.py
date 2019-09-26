@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
-import scanpy as sc
+from .scanpy_read_10x import read_10x_h5
 from .dataset import DataSet
 
 
@@ -30,14 +30,9 @@ def read_anndata_to_anndata(dataset: DataSet):
 def read_10xhdf5_to_anndata(dataset: DataSet):
     """Reads a dataset in the 10x hdf5 format into the AnnData format."""
 
-    adata = sc.read_10x_h5(dataset.file)
-    return adata
-
-
-def read_10xmtx_to_anndata(dataset: DataSet):
-    """Reads a dataset in the 10x mtx format into the AnnData format."""
-
-    adata = sc.read_10x_mtx(dataset.file)
+    # todo replace with anndata.read_10x_h5 once read_10x_h5 is moved to anndata (if
+    # ever)
+    adata = read_10x_h5(dataset.file)
     return adata
 
 
@@ -48,9 +43,6 @@ def read_dropseqtsv_to_anndata(dataset: DataSet):
 
     with open(file) as f:
         cells = f.readline().replace('"', "").split("\t")
-        # omit first element if it is empty
-        if not cells[0]:
-            cells = cells[1:]
         samples = [re.search("(.*)_", c).group(1) for c in cells]
 
     genes = pd.read_csv(
