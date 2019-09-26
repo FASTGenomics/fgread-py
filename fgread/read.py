@@ -9,6 +9,7 @@ DEFAULT_READERS = {
     "Seurat Object": readers.read_seurat_to_anndata,
     "AnnData": readers.read_anndata_to_anndata,
     "10x (hdf5)": readers.read_10xhdf5_to_anndata,
+    "10x (mtx)": readers.read_10xmtx_to_anndata,
     "Drop-Seq (tsv)": readers.read_dropseqtsv_to_anndata,
 }
 
@@ -34,11 +35,13 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     if format == "Other":
         raise NotImplementedError(
-            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are unsupported by this module and have to be loaded manually.'
+            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are unsupported "\
+            "by this module and have to be loaded manually.'
         )
     elif format == "Not set":
         raise KeyError(
-            f'The format of the dataset "{title}" was not defined.  If you can modify the dataset please specify its format in its Details page, otherwise ask the dataset owner to do that.'
+            f'The format of the dataset "{title}" was not defined.  If you can modify the dataset please specify its "\
+            "format in its Details page, otherwise ask the dataset owner to do that.'
         )
     elif format in readers:
         print(
