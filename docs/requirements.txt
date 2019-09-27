@@ -2,3 +2,4 @@ anndata
 get_version
 tables
 recommonmark
+scanpy
