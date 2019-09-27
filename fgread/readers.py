@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
-from .scanpy_read_10x import read_10x_h5
+import scanpy as sc
 from .dataset import DataSet
 
 
@@ -30,27 +30,43 @@ def read_anndata_to_anndata(dataset: DataSet):
 def read_10xhdf5_to_anndata(dataset: DataSet):
     """Reads a dataset in the 10x hdf5 format into the AnnData format."""
 
-    # todo replace with anndata.read_10x_h5 once read_10x_h5 is moved to anndata (if
-    # ever)
-    adata = read_10x_h5(dataset.file)
+    adata = sc.read_10x_h5(dataset.file)
     return adata
 
 
-def read_dropseqtsv_to_anndata(dataset: DataSet):
+def read_10xmtx_to_anndata(dataset: DataSet):
+    """Reads a dataset in the 10x mtx format into the AnnData format."""
+
+    adata = sc.read_10x_mtx(dataset.path)
+    return adata
+
+
+def read_densetsv_to_anndata(dataset: DataSet):
+    return read_densemat_to_anndata(dataset, sep="\t")
+
+
+def read_densecsv_to_anndata(dataset: DataSet):
+    return read_densemat_to_anndata(dataset, sep=",")
+
+
+def read_densemat_to_anndata(dataset: DataSet, sep=None):
     """Reads a dataset in the DropSeq format into the AnnData format."""
 
     file = dataset.file
 
     with open(file) as f:
-        cells = f.readline().replace('"', "").split("\t")
+        cells = f.readline().replace('"', '').split(sep)
+        nextline = f.readline().replace('"', '').split(sep)
+        n_cells = len(nextline)-1
+        cells = cells[-n_cells:]
         samples = [re.search("(.*)_", c).group(1) for c in cells]
 
     genes = pd.read_csv(
-        file, sep="\t", skiprows=1, usecols=(0,), header=None, names=["GeneID"]
+        file, skiprows=1, usecols=(0,), header=None, names=["GeneID"]
     ).set_index("GeneID")
     X = np.loadtxt(
         file,
-        delimiter="\t",
+        delimiter=sep,
         skiprows=1,
         usecols=range(1, len(cells) + 1),
         dtype=np.float32,

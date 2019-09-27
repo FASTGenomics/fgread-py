@@ -9,7 +9,9 @@ DEFAULT_READERS = {
     "Seurat Object": readers.read_seurat_to_anndata,
     "AnnData": readers.read_anndata_to_anndata,
     "10x (hdf5)": readers.read_10xhdf5_to_anndata,
-    "Drop-Seq (tsv)": readers.read_dropseqtsv_to_anndata,
+    "10x (mtx)": readers.read_10xmtx_to_anndata,
+    "tab-separated text": readers.read_densetsv_to_anndata,
+    "comma-separated text": readers.read_densecsv_to_anndata,
 }
 
 DATA_DIR = "/fastgenomics/data"
@@ -34,20 +36,27 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     if format == "Other":
         raise NotImplementedError(
-            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are unsupported by this module and have to be loaded manually.'
+            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are unsupported "\
+            "by this module and have to be loaded manually.'
         )
     elif format == "Not set":
         raise KeyError(
-            f'The format of the dataset "{title}" was not defined.  If you can modify the dataset please specify its format in its Details page, otherwise ask the dataset owner to do that.'
+            f'The format of the dataset "{title}" was not defined.  If you can modify the dataset please specify its "\
+            "format in its Details page, otherwise ask the dataset owner to do that.'
         )
     elif format in readers:
         print(
-            f'Loading dataset "{title}" in format "{format}" from directory "{path}".'
+            f'Loading dataset "{title}" in format "{format}" from directory "{path}"...'
         )
         adata = readers[format](dataset)
         adata.uns["metadata"] = dataset.metadata
         adata.obs["fg_title"] = dataset.title
         adata.obs["fg_id"] = dataset.id
+        n_genes = adata.shape[0]
+        n_cells = adata.shape[1]
+        print(
+            f'Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n'
+        )
         return adata
     else:
         raise KeyError(f'Unsupported format "{format}", use one of {readers}')
@@ -78,7 +87,7 @@ def get_datasets(data_dir=DATA_DIR):
 
 def print_datasets(data_dir=DATA_DIR):
     """prints the list of available datasets
-    
+
     :param data_dir: Specify the main data directory.  Useful for testing the module,
         defaults to the FASTGenomics path ``/fastgenomics/data``.
     """

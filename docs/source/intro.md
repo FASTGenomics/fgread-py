@@ -12,7 +12,9 @@ will let you list and load datasets for which the analysis was defined.
 The following formats are supported by this package
 - [AnnData](https://github.com/theislab/anndata)
 - [CellRanger (hdf5)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices)
-- [Drop-Seq (tsv)](https://github.com/Hoohm/dropSeqPipe/)
+- [CellRanger (mtx)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/output/matrices)
+- tab-separated text
+- comma-separated text
 - [Loom](http://loompy.org/)
 
 Currently unsupported

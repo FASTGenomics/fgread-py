@@ -9,6 +9,6 @@ def test_other(dset_other, list_datasets):
         fgread.read_dataset(list_datasets[dset_other["id"]])
 
 
-def test_other(dset_notset, list_datasets):
+def test_notset(dset_notset, list_datasets):
     with pytest.raises(KeyError, match="The format of the dataset .* was not defined"):
         fgread.read_dataset(list_datasets[dset_notset["id"]])
