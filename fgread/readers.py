@@ -56,9 +56,9 @@ def read_dropseq_to_anndata(dataset: DataSet, sep=None):
 
     with open(file) as f:
         cells = f.readline().replace('"', '').split(sep)
-        # omit first element if it is empty
-        if (not cells[0].strip()) | (cells[0].lower()[:4] == 'gene'):
-            cells = cells[1:]
+        nextline = f.readline().replace('"', '').split(sep)
+        n_cells = len(nextline)-1
+        cells = cells[-n_cells:]
         samples = [re.search("(.*)_", c).group(1) for c in cells]
 
     genes = pd.read_csv(
