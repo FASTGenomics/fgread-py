@@ -64,14 +64,13 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
     genes = pd.read_csv(
         file, skiprows=1, usecols=(0,), header=None, names=["GeneID"]
     ).set_index("GeneID")
-    with open(file) as fid:
-        X = np.loadtxt(
-            fid,
-            delimiter=sep,
-            skiprows=1,
-            usecols=range(1, len(cells) + 1),
-            dtype=np.float32,
-        ).T
+    X = np.loadtxt(
+        file,
+        delimiter=sep,
+        skiprows=1,
+        usecols=range(1, len(cells) + 1),
+        dtype=np.float32,
+    ).T
     X = sp.csr_matrix(X)
 
     var = genes
