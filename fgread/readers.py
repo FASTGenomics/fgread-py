@@ -46,7 +46,7 @@ def read_densetsv_to_anndata(dataset: DataSet):
 
 
 def read_densecsv_to_anndata(dataset: DataSet):
-    return read_densemat_to_anndata(dataset, sep=", ")
+    return read_densemat_to_anndata(dataset, sep=",")
 
 
 def read_densemat_to_anndata(dataset: DataSet, sep=None):

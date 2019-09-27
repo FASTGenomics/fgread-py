@@ -10,7 +10,8 @@ DEFAULT_READERS = {
     "AnnData": readers.read_anndata_to_anndata,
     "10x (hdf5)": readers.read_10xhdf5_to_anndata,
     "10x (mtx)": readers.read_10xmtx_to_anndata,
-    "Drop-Seq (tsv)": readers.read_densetsv_to_anndata,
+    "tab-separated text": readers.read_densetsv_to_anndata,
+    "comma-separated text": readers.read_densecsv_to_anndata,
 }
 
 DATA_DIR = "/fastgenomics/data"
@@ -45,12 +46,17 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         )
     elif format in readers:
         print(
-            f'Loading dataset "{title}" in format "{format}" from directory "{path}".'
+            f'Loading dataset "{title}" in format "{format}" from directory "{path}"...'
         )
         adata = readers[format](dataset)
         adata.uns["metadata"] = dataset.metadata
         adata.obs["fg_title"] = dataset.title
         adata.obs["fg_id"] = dataset.id
+        n_genes = adata.shape[0]
+        n_cells = adata.shape[1]
+        print(
+            f'Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n'
+        )
         return adata
     else:
         raise KeyError(f'Unsupported format "{format}", use one of {readers}')
