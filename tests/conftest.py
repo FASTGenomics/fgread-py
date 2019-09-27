@@ -11,7 +11,8 @@ DATASETS = [
     dict(id=3, dim=(10, 20), title="AnnData dataset", format="AnnData"),
     dict(id=4, dim=(1222, 33538), title="10x (hdf5) dataset", format="10x (hdf5)"),
     dict(id=5, dim=(20000, 99), title="Drop-Seq (tsv) dataset", format="Drop-Seq (tsv)"),
-    dict(id=8, dim=(30, 1000), title="mtx dataset", format="10x (mtx)"),
+    dict(id=8, dim=(30, 1000), title="mtx legacy dataset", format="10x (mtx)"),
+    dict(id=9, dim=(30, 1000), title="mtx v3 dataset", format="10x (mtx)"),
 ]
 
 # special treatment for the unsupported seurat object
@@ -19,10 +20,10 @@ DATASET_SEURAT = dict(
     id=2, dim=(1222, 33538), title="Seurat Object dataset", format="Seurat Object"
 )
 
-# special treatment for the unsupported seurat object
+# special treatment for  "other dataset"
 DATASET_OTHER = dict(id=6, title="Other dataset", format="Other")
 
-# special treatment for the unsupported seurat object
+# special treatment for "not set dataset"
 DATASET_NOTSET = dict(id=7, title="Not set dataset", format="Not set")
 
 

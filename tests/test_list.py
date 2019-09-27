@@ -3,8 +3,8 @@ import fgread
 
 def test_list(data_dir):
     dsets_list = fgread.get_datasets(data_dir)
-    assert len(dsets_list) == 8
-    assert set(dsets_list.keys()) == set(range(1, 9))
+    assert len(dsets_list) == 9
+    assert set(dsets_list.keys()) == set(range(1, 10))
 
 
 def test_representation(list_datasets):

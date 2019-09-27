@@ -37,19 +37,19 @@ def read_10xhdf5_to_anndata(dataset: DataSet):
 def read_10xmtx_to_anndata(dataset: DataSet):
     """Reads a dataset in the 10x mtx format into the AnnData format."""
 
-    adata = sc.read_10x_mtx(dataset.file)
+    adata = sc.read_10x_mtx(dataset.path)
     return adata
 
 
-def read_dropseqtsv_to_anndata(dataset: DataSet):
-    return read_dropseq_to_anndata(dataset, sep="\t")
+def read_densetsv_to_anndata(dataset: DataSet):
+    return read_densemat_to_anndata(dataset, sep="\t")
 
 
-def read_dropseqcsv_to_anndata(dataset: DataSet):
-    return read_dropseq_to_anndata(dataset, sep=", ")
+def read_densecsv_to_anndata(dataset: DataSet):
+    return read_densemat_to_anndata(dataset, sep=", ")
 
 
-def read_dropseq_to_anndata(dataset: DataSet, sep=None):
+def read_densemat_to_anndata(dataset: DataSet, sep=None):
     """Reads a dataset in the DropSeq format into the AnnData format."""
 
     file = dataset.file

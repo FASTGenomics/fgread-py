@@ -10,7 +10,7 @@ DEFAULT_READERS = {
     "AnnData": readers.read_anndata_to_anndata,
     "10x (hdf5)": readers.read_10xhdf5_to_anndata,
     "10x (mtx)": readers.read_10xmtx_to_anndata,
-    "Drop-Seq (tsv)": readers.read_dropseqtsv_to_anndata,
+    "Drop-Seq (tsv)": readers.read_densetsv_to_anndata,
 }
 
 DATA_DIR = "/fastgenomics/data"
