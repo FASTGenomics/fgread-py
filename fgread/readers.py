@@ -42,15 +42,20 @@ def read_10xmtx_to_anndata(dataset: DataSet):
 
 
 def read_densetsv_to_anndata(dataset: DataSet):
+    """Reads a dense text file in tsv format into the AnnData format."""
+
     return read_densemat_to_anndata(dataset, sep="\t")
 
 
 def read_densecsv_to_anndata(dataset: DataSet):
+    """Reads a dense text file in csv format into the AnnData format."""
+
     return read_densemat_to_anndata(dataset, sep=",")
 
 
 def read_densemat_to_anndata(dataset: DataSet, sep=None):
-    """Reads a dataset in the DropSeq format into the AnnData format."""
+    """Helper function to read dense text files in tsv and csv format.
+    The separator (tab or comma) is passed by the corresponding function."""
 
     file = dataset.file
 
@@ -59,7 +64,6 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
         nextline = f.readline().replace('"', '').split(sep)
         n_cells = len(nextline)-1
         cells = cells[-n_cells:]
-        samples = [re.search("(.*)_", c).group(1) for c in cells]
 
     genes = pd.read_csv(
         file, skiprows=1, usecols=(0,), header=None, names=["GeneID"]
@@ -75,7 +79,7 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
 
     var = genes
     obs = pd.DataFrame(
-        samples, columns=["sample"], index=pd.Series(cells, name="CellID")
+        cells, columns=["sample"], index=pd.Series(cells, name="CellID")
     )
 
     adata = anndata.AnnData(X=X, var=var, obs=obs)

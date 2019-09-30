@@ -34,4 +34,5 @@ class DataSet(object):
         title:  {self.title}
         format: {self.format}
         path:   {self.path}
+        file:   {self.metadata["file"]}
         """

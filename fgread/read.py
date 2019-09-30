@@ -2,7 +2,6 @@ import re
 from pathlib import Path
 from . import readers
 from .dataset import DataSet
-from collections import OrderedDict
 
 DEFAULT_READERS = {
     "Loom": readers.read_loom_to_anndata,
@@ -82,7 +81,7 @@ def get_datasets(data_dir=DATA_DIR):
         for subdir in sorted(data_dir.iterdir())
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
-    return OrderedDict({dataset.id: dataset for dataset in map(DataSet, paths)})
+    return {dataset.id: dataset for dataset in map(DataSet, paths)}
 
 
 def print_datasets(data_dir=DATA_DIR):
@@ -94,8 +93,8 @@ def print_datasets(data_dir=DATA_DIR):
 
     datasets = get_datasets(data_dir=data_dir)
 
-    for index, ds in datasets.items():
-        print(f"Dataset: {index}:", ds)
+    for index in sorted(datasets.keys()):
+        print(f"Dataset: {index}:", datasets[index])
         print()
 
 
@@ -116,7 +115,14 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
     """
 
     datasets = datasets or get_datasets(data_dir)
-    return {
-        dataset.id: read_dataset(dataset, additional_readers=additional_readers)
-        for dataset in datasets.values()
-    }
+
+    if isinstance(datasets, dict):
+        return {
+            dataset_id: read_dataset(datasets[dataset_id], additional_readers=additional_readers)
+            for dataset_id in sorted(datasets.keys())
+        }
+    else:
+        raise TypeError(
+            f'The type of "datasets" has to be a dict. Use "fgread.get_datasets()" to create it.')
+
+
