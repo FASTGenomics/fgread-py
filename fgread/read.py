@@ -123,6 +123,7 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
         }
     else:
         raise TypeError(
-            f'The type of "datasets" has to be a dict. Use "fgread.get_datasets()" to create it.')
+            f'The type of "datasets" has to be a dict. Use "fgread.get_datasets()" to create it.'
+            f'If you only want to load a single dataset, use "fgread.get_dataset()"')
 
 
