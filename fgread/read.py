@@ -51,10 +51,10 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         adata.uns["metadata"] = dataset.metadata
         adata.obs["fg_title"] = dataset.title
         adata.obs["fg_id"] = dataset.id
-        n_genes = adata.shape[0]
-        n_cells = adata.shape[1]
+        n_genes = adata.shape[1]
+        n_cells = adata.shape[0]
         print(
-            f'Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n'
+            f'Loaded dataset "{title}" with {n_cells} cells and {n_genes} genes\n'
         )
         return adata
     else:
