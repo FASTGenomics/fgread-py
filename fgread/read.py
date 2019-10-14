@@ -1,7 +1,18 @@
 import re
 from pathlib import Path
 from . import readers
-from .dataset import DataSet
+from .dataset import DataSet, DatasetDict
+import logging
+from . import BLOGURL
+
+
+# configure logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+logger.addHandler(ch)
+
 
 DEFAULT_READERS = {
     "Loom": readers.read_loom_to_anndata,
@@ -33,19 +44,9 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     readers = {**DEFAULT_READERS, **additional_readers}
 
-    if format == "Other":
-        raise NotImplementedError(
-            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are unsupported "\
-            "by this module and have to be loaded manually.'
-        )
-    elif format == "Not set":
-        raise KeyError(
-            f'The format of the dataset "{title}" was not defined.  If you can modify the dataset please specify its "\
-            "format in its Details page, otherwise ask the dataset owner to do that.'
-        )
-    elif format in readers:
-        print(
-            f'Loading dataset "{title}" in format "{format}" from directory "{path}"...'
+    if format in readers:
+        logger.info(
+            f'Loading dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](dataset)
         adata.uns["metadata"] = dataset.metadata
@@ -53,16 +54,30 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         adata.obs["fg_id"] = dataset.id
         n_genes = adata.shape[1]
         n_cells = adata.shape[0]
-        print(
-            f'Loaded dataset "{title}" with {n_cells} cells and {n_genes} genes\n'
+        logger.info(
+            f'Loaded dataset "{title}" with {n_cells} cells and {n_genes} genes.\n'
+            f'==================================================================\n'
         )
         return adata
+
+    elif format == "Other":
+        raise NotImplementedError(
+            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '\
+                f'unsupported by this module and have to be loaded manually.\nSee {BLOGURL} for more information.'
+        )
+    elif format == "Not set":
+        raise ValueError(
+            f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '\
+                f'its format in its details page, otherwise ask the dataset owner to do that.\nSee {BLOGURL} for more information.'
+        )
     else:
-        raise KeyError(f'Unsupported format "{format}", use one of {readers}')
+        raise KeyError(f'Unsupported format "{format}", use one of {list(readers)} or implement your '\
+                f'own reading function.\nSee {BLOGURL} for more information.')
+
 
 
 def get_datasets(data_dir=DATA_DIR):
-    """Lists all available datasets.  This is a convenience function used to gather all
+    """Gets all available datasets.  This is a convenience function used to gather all
     information specified in the FASTGenomics environment.  The returned value can be
     either used to manually load datasets or passed to the :py:func:`read_dataset` or
     :py:func:`read_datasets` functions.
@@ -81,21 +96,10 @@ def get_datasets(data_dir=DATA_DIR):
         for subdir in sorted(data_dir.iterdir())
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
-    return {dataset.id: dataset for dataset in map(DataSet, paths)}
+    datasets = DatasetDict({dataset.id: dataset for dataset in map(DataSet, paths)})
 
 
-def print_datasets(data_dir=DATA_DIR):
-    """prints the list of available datasets
-
-    :param data_dir: Specify the main data directory.  Useful for testing the module,
-        defaults to the FASTGenomics path ``/fastgenomics/data``.
-    """
-
-    datasets = get_datasets(data_dir=data_dir)
-
-    for index in sorted(datasets.keys()):
-        print(f"Dataset: {index}:", datasets[index])
-        print()
+    return datasets
 
 
 def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
@@ -116,14 +120,16 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
 
     datasets = datasets or get_datasets(data_dir)
 
-    if isinstance(datasets, dict):
-        return {
+    if isinstance(datasets, DatasetDict):
+        return DatasetDict({
             dataset_id: read_dataset(datasets[dataset_id], additional_readers=additional_readers)
             for dataset_id in sorted(datasets.keys())
-        }
+        })
+    elif isinstance(datasets, DataSet):
+        return read_dataset(datasets)
     else:
         raise TypeError(
-            f'The type of "datasets" has to be a dict. Use "fgread.get_datasets()" to create it.'
-            f'If you only want to load a single dataset, use "fgread.get_dataset()"')
+            f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" '\
+                f'to create it.\nSee {BLOGURL} for more information.')
 
 
