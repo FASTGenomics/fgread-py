@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-import fgread.read as fgr
+import fgread
 
 HERE = Path(__file__).parent
 DATA_DIR = HERE / "data" / "readers"
@@ -37,7 +37,7 @@ def data_dir():
 # a list of all datasets
 @pytest.fixture()
 def list_datasets(data_dir):
-    return fgr.get_datasets(data_dir)
+    return fgread.get_datasets(data_dir)
 
 
 # supported datasets

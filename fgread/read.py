@@ -3,6 +3,8 @@ from pathlib import Path
 from . import readers
 from .dataset import DataSet, DatasetDict
 import logging
+from . import BLOGURL
+
 
 # configure logging
 logger = logging.getLogger(__name__)
@@ -61,15 +63,16 @@ def read_dataset(dataset: DataSet, additional_readers={}):
     elif format == "Other":
         raise NotImplementedError(
             f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '\
-                'unsupported by this module and have to be loaded manually.'
+                f'unsupported by this module and have to be loaded manually.\nSee {BLOGURL} for more information.'
         )
     elif format == "Not set":
         raise ValueError(
             f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '\
-                'its format in its details page, otherwise ask the dataset owner to do that.'
+                f'its format in its details page, otherwise ask the dataset owner to do that.\nSee {BLOGURL} for more information.'
         )
     else:
-        raise KeyError(f'Unsupported format "{format}", use one of {list(readers)} or implement your one reading function.')
+        raise KeyError(f'Unsupported format "{format}", use one of {list(readers)} or implement your '\
+                f'own reading function.\nSee {BLOGURL} for more information.')
 
 
 
@@ -126,7 +129,7 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
         return read_dataset(datasets)
     else:
         raise TypeError(
-            f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" to create it.'
-            f'If you only want to load a single dataset, use "fgread.get_dataset()"')
+            f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" '\
+                f'to create it.\nSee {BLOGURL} for more information.')
 
 

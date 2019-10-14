@@ -40,20 +40,22 @@ class DataSet(object):
 
 class DatasetDict(dict):
     '''
-    Represents a dictionary for :py:class:`~DataSet` objects.
+    Represents a dictionary for :py:class:`~DataSet` objects. You can select a single dataset by its ID (DatasetDict[ID]),
+    or you can pass a list of IDs (DatasetDict[[ID1, ID3, ID4]]), or you can use slices (DatasetDict[1:3]).
+    Note that lower and upper bounds are inclusive and you pass dataset IDs not indices (hence starting with 1).
     '''
 
-    def __getitem__(self, key):
-        if isinstance(key, slice):
-            stop = key.stop + 1 if key.stop else 0
-            newkey = slice(key.start, stop, key.step)
+    def __getitem__(self, select):
+        if isinstance(select, slice):
+            stop = select.stop + 1 if select.stop else None
+            newkey = slice(select.start, stop, select.step)
             keys = list(self.keys())
             keys.append(max(self.keys()) + 1)
             idx = list(range(max(keys))[newkey])
-            key = list(set(idx) & set(keys))
-        if isinstance(key, list):
-            return DatasetDict({k: self[k] for k in key})
-        return dict.__getitem__(self, key)
+            select = list(set(idx) & set(keys))
+        if isinstance(select, list):
+            return DatasetDict({f"{sel}": self[sel] for sel in select})
+        return dict.__getitem__(self, select)
 
     def __repr__(self):
         ds_list = [f"Dataset: {id}\n{indent_multiline(str(ds))}" for id, ds in self.items()]
@@ -62,7 +64,7 @@ class DatasetDict(dict):
 
 def indent_multiline(ml_str, tabs=1):
     '''
-
+    Indents a multiline string.
     :param ml_str: A multiline string
     :param tabs: the number of tabs (indents) to add to each line
     :return: An indented multiline string
