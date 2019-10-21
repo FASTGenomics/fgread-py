@@ -78,7 +78,7 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
 def get_datasets(data_dir=DATA_DIR):
     """Gets all available datasets.  This is a convenience function used to gather all
-    information specified in the FASTGenomics environment.  The returned value can be
+    information specified in the FASTGenomics environment. The returned value can be
     either used to manually load datasets or passed to the :py:func:`read_dataset` or
     :py:func:`read_datasets` functions.
 
@@ -103,10 +103,10 @@ def get_datasets(data_dir=DATA_DIR):
 
 
 def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
-    """Reads all datasets and returns them as AnnData objects.  Internally uses
+    """Reads all specified datasets and returns them as AnnData objects.  Internally uses
     :py:func:`read_dataset` to read the datasets.
 
-    :param datasets: If specified, read the datasets from this dictionary.  Can be
+    :param datasets: If specified, read the datasets from this dictionary or list.  Can be
         useful for e.g. filtering some dataset types.
     :param additional_readers: Used to specify your own readers for the specific data
         set format.  Highly experimental and not tested.
@@ -114,8 +114,9 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
         ``datasets==None``.  Useful for testing the module, defaults to the FASTGenomics
         path ``/fastgenomics/data``.
 
-    :returns: A dictionary of dataset objects, where the keys are dataset ids and the
-              values are the corresponding AnnData objects.
+    :returns: If multiple datasets are given returns a dictionary of dataset objects,
+        where the keys are dataset ids and the values are the corresponding AnnData objects.
+        If a single dataset is passed, an AnnData object is returned.
     """
 
     datasets = datasets or get_datasets(data_dir)
