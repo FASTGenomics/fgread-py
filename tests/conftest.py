@@ -4,7 +4,7 @@ from pathlib import Path
 import fgread
 
 HERE = Path(__file__).parent
-DATA_DIR = HERE / "data" / "readers"
+DATA_DIR = HERE / "data" / "all_datasets"
 
 DATASETS = [
     dict(id=1, dim=(298, 16892), title="Loom dataset", format="Loom"),
