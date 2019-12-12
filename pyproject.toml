@@ -14,7 +14,8 @@ requires=[
     'get_version ~=2.1.0',
     "tables ~= 3.6",
     "loompy ~= 3.0.6",
-    "scanpy ~= 1.4.4"
+    "scanpy ~= 1.4.4",
+    "tqdm >= 4"
 ]
 
 
