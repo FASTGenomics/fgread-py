@@ -5,7 +5,6 @@ import scipy.sparse as sp
 import scanpy as sc
 from .dataset import DataSet
 from . import BLOGURL
-from tqdm.auto import tqdm
 
 
 def read_loom_to_anndata(dataset: DataSet):
@@ -60,38 +59,28 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
 
     file = dataset.file
 
-    genes = pd.read_csv(file, skiprows=1, usecols=(0,), header=None, names=["GeneID"], delimiter=sep,
-                        squeeze=True)
     with open(file) as f:
-        # Get cell names from first row
-        cells = f.readline().strip().replace('"', '').split(sep)
-        # Read second row and get the real cell count, as the first row can have different formats
-        line = f.readline().strip().replace('"', '')
-        n_cells = len(line.split(sep)) - 1
-        cells = pd.Series(cells[-n_cells:], name="CellID")
+        cells = f.readline().replace('"', '').split(sep)
+        nextline = f.readline().replace('"', '').split(sep)
+        n_cells = len(nextline)-1
+        cells = cells[-n_cells:]
 
-        # Initialize matrix
-        lil_mat = sp.lil_matrix((len(cells), len(genes)), dtype=np.float64)
+    genes = pd.read_csv(
+        file, skiprows=1, usecols=(0,), header=None, names=["GeneID"]
+    ).set_index("GeneID")
+    X = np.loadtxt(
+        file,
+        delimiter=sep,
+        skiprows=1,
+        usecols=range(1, len(cells) + 1),
+        dtype=np.float32,
+    ).T
+    X = sp.csr_matrix(X)
 
-        prog = tqdm(total=len(genes) * len(cells), unit="counts", desc="Reading counts", unit_scale=True)
-        gene_idx = 0
-        while line:
-            prog.update(len(cells))
-            expr_lst = line.split(sep)[1:]
+    var = genes
+    obs = pd.DataFrame(
+        cells, columns=["sample"], index=pd.Series(cells, name="CellID")
+    )
 
-            for idx in range(len(expr_lst)):
-                if expr_lst[idx] == 0:
-                    lil_mat[idx, gene_idx] = expr_lst[idx]
-
-            line = f.readline().strip().replace('"', '')
-            gene_idx += 1
-
-        prog.close()
-
-    # Convert to anndata
-    obs = pd.DataFrame(index=cells)
-    var = pd.DataFrame(index=genes)
-
-    adata = anndata.AnnData(X=lil_mat, obs=obs, var=var, dtype=np.float64)
-
+    adata = anndata.AnnData(X=X, var=var, obs=obs)
     return adata
