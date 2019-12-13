@@ -78,17 +78,20 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
         while line:
             prog.update(len(cells))
             expr_lst = line.split(sep)[1:]
-            expr = pd.Series(expr_lst, dtype=np.float64, name="expression")
-            expr_mask = np.flatnonzero(expr != 0)
 
-            lil_mat[expr_mask, gene_idx] = expr[expr_mask]
+            for idx in range(len(expr_lst)):
+                if expr_lst[idx] == 0:
+                    lil_mat[idx, gene_idx] = expr_lst[idx]
 
             line = f.readline().strip().replace('"', '')
             gene_idx += 1
+
         prog.close()
+
     # Convert to anndata
     obs = pd.DataFrame(index=cells)
     var = pd.DataFrame(index=genes)
-    adata = anndata.AnnData(X=lil_mat.tocsr(), obs=obs, var=var, dtype=np.float64)
+
+    adata = anndata.AnnData(X=lil_mat, obs=obs, var=var, dtype=np.float64)
 
     return adata
