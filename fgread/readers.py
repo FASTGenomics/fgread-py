@@ -17,7 +17,8 @@ def read_loom_to_anndata(dataset: DataSet):
 def read_seurat_to_anndata(dataset: DataSet):
     """Reads a dataset in the Seurat format into the AnnData format (not implemented)."""
 
-    raise NotImplementedError(f"Reading of Seurat files not implemented.\nSee {BLOGURL} for more information.")
+    raise NotImplementedError(
+        f"Reading of Seurat files not implemented.\nSee {BLOGURL} for more information.")
 
 
 def read_anndata_to_anndata(dataset: DataSet):

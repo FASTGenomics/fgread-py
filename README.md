@@ -6,7 +6,7 @@
 # FASTGenomics Reader Module for Python
 
 This package implements convenience functions for loading datasets in the
-[FASTGenomics][fg] [analysis][fg_analysis] environment.  The functions from this package
+[FASTGenomics][fg] [analysis][fg_analysis] environment. The functions from this package
 will let you list and load datasets for which the analysis was defined.
 
 [fg]: https://beta.fastgenomics.org/webclient/
@@ -15,6 +15,7 @@ will let you list and load datasets for which the analysis was defined.
 ## Supported formats
 
 The following formats are supported by this package
+
 - [AnnData](https://github.com/theislab/anndata)
 - [CellRanger (hdf5)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices)
 - [CellRanger (mtx)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/output/matrices)
@@ -23,13 +24,14 @@ The following formats are supported by this package
 - [Loom](http://loompy.org/)
 
 Currently unsupported
+
 - [Seurat Object](https://satijalab.org/seurat/)
 
 # Usage
 
 Start by importing the module with
 
-``` python
+```python
 import fgread
 ```
 
@@ -37,7 +39,7 @@ import fgread
 
 To list the datasets simply call the `fgread.get_datasets` function
 
-``` R
+```R
 dsets_list = fgread.get_datasets()
 ```
 
@@ -56,22 +58,22 @@ etc. about each dataset.
 }
 ```
 
-Note, that `fgread.get_datasets()` does not load any of the datasets.  It's purpose
+Note, that `fgread.get_datasets()` does not load any of the datasets. It's purpose
 is to get a list of available datasets, from which you can select the ones you would
 like to load.
 
 ## Loading a single dataset
 
-To load a single dataset use `fgread.read_dataset`.  The code below loads the first
+To load a single dataset use `fgread.read_dataset`. The code below loads the first
 dataset from the list (the "Loom dataset") and returns an [AnnData][anndata] object
 
-``` R
+```R
 adata = fgread.read_dataset(dsets_list[1])
 ```
 
 To load the second dataset simply run
 
-``` R
+```R
 adata = fgread.read_dataset(dsets_list[2])
 ```
 
@@ -83,13 +85,14 @@ automatically, based on the `format` attributes contained in the `dsets_list[1]`
 ## Loading multiple datasets
 
 Similarly, one can load multiple datasets with a single command: `fgread.read_datasets`
-(note the `s` at the end).  The command loads all available datasets into _separate_
+(note the `s` at the end). The command loads all available datasets into _separate_
 anndata objects and returns a list of these objects (where the indices correspond to the
 indices from `fgread.get_datasets`).
 
-``` R
+```R
 dsets = fgread.read_datasets(dsets_list)
 ```
+
 Now the `dsets` is a list containing two anndata objects
 
 ```
@@ -106,10 +109,9 @@ Now the `dsets` is a list containing two anndata objects
 
 Used without any arguments `fgread.read_datasets()` loads all datasets
 
-``` R
+```R
 dsets = fgread.read_datasets()
 ```
-
 
 ```
 {1: AnnData object with n_obs × n_vars = 298 × 16892
@@ -133,18 +135,18 @@ Please report the issues through [github][issues].
 
 Clone the repository along with the test data by running
 
-``` bash
+```bash
 git clone --recurse-submodules git@github.com:FASTGenomics/fgread-py.git
 ```
 
 Then enter the `fgread-py` directory and install the dependencies with
 
-``` bash
+```bash
 flit install --deps all
 ```
 
 To test the package use
 
-``` bash
+```bash
 python3 -m pytest
 ```

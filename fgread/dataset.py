@@ -38,6 +38,7 @@ class DataSet(object):
             f'file:   {self.metadata["file"]}'
         )
 
+
 class DatasetDict(dict):
     '''
     Represents a dictionary for :py:class:`~DataSet` objects. You can select a single dataset by its ID (DatasetDict[ID]),
@@ -58,7 +59,8 @@ class DatasetDict(dict):
         return dict.__getitem__(self, select)
 
     def __repr__(self):
-        ds_list = [f"Dataset: {id}\n{indent_multiline(str(ds))}" for id, ds in self.items()]
+        ds_list = [
+            f"Dataset: {id}\n{indent_multiline(str(ds))}" for id, ds in self.items()]
         return "\n\n".join(ds_list)
 
 

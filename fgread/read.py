@@ -62,18 +62,17 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     elif format == "Other":
         raise NotImplementedError(
-            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '\
-                f'unsupported by this module and have to be loaded manually.\nSee {BLOGURL} for more information.'
+            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '
+            f'unsupported by this module and have to be loaded manually.\nSee {BLOGURL} for more information.'
         )
     elif format == "Not set":
         raise ValueError(
-            f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '\
-                f'its format in its details page, otherwise ask the dataset owner to do that.\nSee {BLOGURL} for more information.'
+            f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '
+            f'its format in its details page, otherwise ask the dataset owner to do that.\nSee {BLOGURL} for more information.'
         )
     else:
-        raise KeyError(f'Unsupported format "{format}", use one of {list(readers)} or implement your '\
-                f'own reading function.\nSee {BLOGURL} for more information.')
-
+        raise KeyError(f'Unsupported format "{format}", use one of {list(readers)} or implement your '
+                       f'own reading function.\nSee {BLOGURL} for more information.')
 
 
 def get_datasets(data_dir=DATA_DIR):
@@ -96,8 +95,8 @@ def get_datasets(data_dir=DATA_DIR):
         for subdir in sorted(data_dir.iterdir())
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
-    datasets = DatasetDict({dataset.id: dataset for dataset in map(DataSet, paths)})
-
+    datasets = DatasetDict(
+        {dataset.id: dataset for dataset in map(DataSet, paths)})
 
     return datasets
 
@@ -123,14 +122,13 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
 
     if isinstance(datasets, DatasetDict):
         return DatasetDict({
-            dataset_id: read_dataset(datasets[dataset_id], additional_readers=additional_readers)
+            dataset_id: read_dataset(
+                datasets[dataset_id], additional_readers=additional_readers)
             for dataset_id in sorted(datasets.keys())
         })
     elif isinstance(datasets, DataSet):
         return read_dataset(datasets)
     else:
         raise TypeError(
-            f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" '\
-                f'to create it.\nSee {BLOGURL} for more information.')
-
-
+            f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" '
+            f'to create it.\nSee {BLOGURL} for more information.')
