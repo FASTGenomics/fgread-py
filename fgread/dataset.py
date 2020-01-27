@@ -31,20 +31,20 @@ class DataSet(object):
 
     def __repr__(self):
         return (
-            f'id:     {self.id}\n'
-            f'title:  {self.title}\n'
-            f'format: {self.format}\n'
-            f'path:   {self.path}\n'
+            f"id:     {self.id}\n"
+            f"title:  {self.title}\n"
+            f"format: {self.format}\n"
+            f"path:   {self.path}\n"
             f'file:   {self.metadata["file"]}'
         )
 
 
 class DatasetDict(dict):
-    '''
+    """
     Represents a dictionary for :py:class:`~DataSet` objects. You can select a single dataset by its ID (DatasetDict[ID]),
     or you can pass a list of IDs (DatasetDict[[ID1, ID3, ID4]]), or you can use slices (DatasetDict[1:3]).
     Note that lower and upper bounds are inclusive and you pass dataset IDs not indices (hence starting with 1).
-    '''
+    """
 
     def __getitem__(self, select):
         if isinstance(select, slice):
@@ -60,15 +60,16 @@ class DatasetDict(dict):
 
     def __repr__(self):
         ds_list = [
-            f"Dataset: {id}\n{indent_multiline(str(ds))}" for id, ds in self.items()]
+            f"Dataset: {id}\n{indent_multiline(str(ds))}" for id, ds in self.items()
+        ]
         return "\n\n".join(ds_list)
 
 
 def indent_multiline(ml_str, tabs=1):
-    '''
+    """
     Indents a multiline string.
     :param ml_str: A multiline string
     :param tabs: the number of tabs (indents) to add to each line
     :return: An indented multiline string
-    '''
+    """
     return re.sub(r"^", "\t" * tabs, ml_str, flags=re.M)

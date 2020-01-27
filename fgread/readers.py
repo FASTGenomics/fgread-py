@@ -18,7 +18,8 @@ def read_seurat_to_anndata(dataset: DataSet):
     """Reads a dataset in the Seurat format into the AnnData format (not implemented)."""
 
     raise NotImplementedError(
-        f"Reading of Seurat files not implemented.\nSee {BLOGURL} for more information.")
+        f"Reading of Seurat files not implemented.\nSee {BLOGURL} for more information."
+    )
 
 
 def read_anndata_to_anndata(dataset: DataSet):
@@ -61,9 +62,9 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
     file = dataset.file
 
     with open(file) as f:
-        cells = f.readline().replace('"', '').split(sep)
-        nextline = f.readline().replace('"', '').split(sep)
-        n_cells = len(nextline)-1
+        cells = f.readline().replace('"', "").split(sep)
+        nextline = f.readline().replace('"', "").split(sep)
+        n_cells = len(nextline) - 1
         cells = cells[-n_cells:]
 
     genes = pd.read_csv(
@@ -79,9 +80,7 @@ def read_densemat_to_anndata(dataset: DataSet, sep=None):
     X = sp.csr_matrix(X)
 
     var = genes
-    obs = pd.DataFrame(
-        cells, columns=["sample"], index=pd.Series(cells, name="CellID")
-    )
+    obs = pd.DataFrame(cells, columns=["sample"], index=pd.Series(cells, name="CellID"))
 
     adata = anndata.AnnData(X=X, var=var, obs=obs)
     return adata
