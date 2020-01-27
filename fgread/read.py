@@ -127,7 +127,7 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
             for dataset_id in sorted(datasets.keys())
         })
     elif isinstance(datasets, DataSet):
-        return read_dataset(datasets)
+        return read_dataset(datasets, additional_readers=additional_readers)
     else:
         raise TypeError(
             f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" '
