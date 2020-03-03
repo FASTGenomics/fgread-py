@@ -1,7 +1,6 @@
 from . import readers, readers_old, BLOGURL, DS_URL_PREFIX
 from .dataset import DataSet, DatasetDict
 import re
-import anndata
 from pathlib import Path
 import pandas as pd
 import json
@@ -158,7 +157,7 @@ def ds_info(
 
 def load_data(
     id: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
-) -> anndata.core.anndata.AnnData:
+):
     """Docstring goes here
     """
     ds_df = ds_info(data_dir=data_dir)
