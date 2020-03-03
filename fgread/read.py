@@ -5,7 +5,6 @@ import anndata
 from pathlib import Path
 import pandas as pd
 import json
-from IPython.display import display, Markdown
 from typing import Optional, Union
 import logging
 
@@ -123,6 +122,19 @@ def ds_info(
 
     ds_df["title"] = ds_df.apply(lambda x: add_url(x.title, x.id), axis=1)
 
+    def disp_pretty_df(df, index=True, header=True):
+        try:
+            from IPython.display import display, Markdown
+
+            df_html = df.to_html(
+                render_links=True, escape=False, header=header, index=index
+            )
+            display(Markdown(df_html))
+        except:
+            logger.warning(
+                "IPython not available. Pretty printing only works in Jupyter Notebooks."
+            )
+
     if id:
         single_dict = ds_df.loc[ds_df["id"] == id].squeeze().to_dict()
         single_df = pd.DataFrame(columns=["key", "value"])
@@ -131,18 +143,14 @@ def ds_info(
             single_df = single_df.append(section, ignore_index=True)
 
         if pretty:
-            single_df_html = single_df.to_html(
-                render_links=True, escape=False, header=False, index=False
-            )
-            display(Markdown(single_df_html))
+            disp_pretty_df(single_df, header=False, index=False)
 
         if output:
             return ds_df.loc[ds_df["id"] == id]
 
     else:
         if pretty:
-            html_df = ds_df.to_html(render_links=True, escape=False)
-            display(Markdown(html_df))
+            disp_pretty_df(ds_df)
 
         if output:
             return ds_df
