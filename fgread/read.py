@@ -65,7 +65,7 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
 def ds_info(
     data_dir: Path = DATA_DIR,
     pretty: bool = True,
-    id: Optional[str] = None,
+    ds_id: Optional[str] = None,
     output: bool = True,
 ) -> pd.DataFrame:
     """[summary]
@@ -76,7 +76,7 @@ def ds_info(
         Directory containing the datasets, e.g. "fastgenomics/data", by default DATA_DIR
     pretty : bool, optional
         Whether to display some nice output, by default True
-    id : Optional[str], optional
+    ds_id : Optional[str], optional
         A single dataset ID. If set, only this dataset will be displayed. Recommended to use with `pretty`, by default None
     output : bool, optional
         Whether to return a DataFrame or not, by default True
@@ -84,7 +84,7 @@ def ds_info(
     Returns
     -------
     pd.DataFrame
-        A pandas DataFrame containing all, or a single dataset (depends on `id`)
+        A pandas DataFrame containing all, or a single dataset (depends on `ds_id`)
     """
 
     if not pretty and not output:
@@ -116,8 +116,8 @@ def ds_info(
     col_names_sorted.extend(col_names)
     ds_df = ds_df[col_names_sorted]
 
-    def add_url(title, id):
-        return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
+    def add_url(title, ds_id):
+        return f'<a href="{DS_URL_PREFIX}{ds_id}" target="_blank">{title}</a>'
 
     ds_df["title"] = ds_df.apply(lambda x: add_url(x.title, x.id), axis=1)
 
@@ -134,8 +134,8 @@ def ds_info(
                 "IPython not available. Pretty printing only works in Jupyter Notebooks."
             )
 
-    if id:
-        single_dict = ds_df.loc[ds_df["id"] == id].squeeze().to_dict()
+    if ds_id:
+        single_dict = ds_df.loc[ds_df["id"] == ds_id].squeeze().to_dict()
         single_df = pd.DataFrame(columns=["key", "value"])
         for key, value in single_dict.items():
             section = pd.DataFrame([{"key": f"<b>{key}</b>", "value": value}])
@@ -145,7 +145,7 @@ def ds_info(
             disp_pretty_df(single_df, header=False, index=False)
 
         if output:
-            return ds_df.loc[ds_df["id"] == id]
+            return ds_df.loc[ds_df["id"] == ds_id]
 
     else:
         if pretty:
@@ -156,32 +156,34 @@ def ds_info(
 
 
 def load_data(
-    id: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
+    ds_id: Optional[str] = None,
+    data_dir: Path = DATA_DIR,
+    additional_readers: dict = {},
 ):
     """Docstring goes here
     """
-    ds_df = ds_info(data_dir=data_dir)
+    ds_df = ds_info(data_dir=data_dir, pretty=False)
     readers = {**DEFAULT_READERS, **additional_readers}
 
-    if not id:
+    if not ds_id:
         assert (
             len(ds_df) == 1
-        ), "There is more than one dataset available. Please select."
+        ), f"There is more than one dataset available. Please select one by its ID."
 
-        id = ds_df.iloc[0]["id"]
+        ds_id = ds_df.iloc[0]["id"]
 
-    format = ds_df.loc[ds_df["id"] == id, ["format"]]
-    title = ds_df.loc[ds_df["id"] == id, ["title"]]
-    path = ds_df.loc[ds_df["id"] == id, ["path"]]
-    file = ds_df.loc[ds_df["id"] == id, ["file"]]
+    format = ds_df.loc[ds_df["id"] == ds_id, ["format"]]
+    title = ds_df.loc[ds_df["id"] == ds_id, ["title"]]
+    path = ds_df.loc[ds_df["id"] == ds_id, ["path"]]
+    file = ds_df.loc[ds_df["id"] == ds_id, ["file"]]
 
     if format in readers:
         logger.info(
             f'Loading dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](Path(path) / file)
-        adata.uns["metadata"] = {id: ds_df.loc[ds_df["id"] == id].to_dict()}
-        adata.obs["fg_id"] = id
+        adata.uns["metadata"] = {ds_id: ds_df.loc[ds_df["id"] == ds_id].to_dict()}
+        adata.obs["fg_id"] = ds_id
         n_genes = adata.shape[1]
         n_cells = adata.shape[0]
         logger.info(
