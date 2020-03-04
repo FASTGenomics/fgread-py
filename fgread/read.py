@@ -39,57 +39,35 @@ DEFAULT_READERS = {
 DATA_DIR = Path("/fastgenomics/data")
 
 
-def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
-    """Gets available datasets for this analysis from path.
-    
-    Parameters
-    ----------
-    data_dir : Union[str,Path], optional
-        Directory containing the datasets, e.g. "fastgenomics/data", by default DATA_DIR
-    
-    Returns
-    -------
-    list
-        A list of dataset paths
-    """
-    data_dir = Path(data_dir)
-    paths = [
-        subdir
-        for subdir in sorted(data_dir.iterdir())
-        if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
-    ]
-    assert paths != [], "There is no data available in this analysis."
-    return paths
-
-
 def ds_info(
-    data_dir: Path = DATA_DIR,
+    ds: Optional[str] = None,
     pretty: bool = True,
-    ds_id: Optional[str] = None,
     output: bool = True,
+    data_dir: Path = DATA_DIR,
 ) -> pd.DataFrame:
-    """[summary]
+
+    """Get information on all available datasets in this analysis.
     
     Parameters
     ----------
-    data_dir : Path, optional
-        Directory containing the datasets, e.g. "fastgenomics/data", by default DATA_DIR
+    ds : Optional[str], optional
+        A single dataset ID or dataset title. If set, only this dataset will be displayed. Recommended to use with ``pretty``, by default None
     pretty : bool, optional
-        Whether to display some nice output, by default True
-    ds_id : Optional[str], optional
-        A single dataset ID. If set, only this dataset will be displayed. Recommended to use with `pretty`, by default None
+        Whether to display some nicely formatted output, by default True
     output : bool, optional
         Whether to return a DataFrame or not, by default True
+    data_dir : Path, optional
+        Directory containing the datasets, e.g. ``fastgenomics/data``, by default DATA_DIR
     
     Returns
     -------
     pd.DataFrame
-        A pandas DataFrame containing all, or a single dataset (depends on `ds_id`)
+        A pandas DataFrame containing all, or a single dataset (depends on ``ds``)
     """
 
     if not pretty and not output:
         logger.warning(
-            '"You have set "pretty" and "output" to false. Hence, this function will do/return nothing.'
+            'You have set "pretty" and "output" to false. Hence, this function will do/return nothing.'
         )
     ds_paths = get_ds_paths(data_dir=data_dir)
     ds_df = pd.DataFrame()
@@ -116,10 +94,8 @@ def ds_info(
     col_names_sorted.extend(col_names)
     ds_df = ds_df[col_names_sorted]
 
-    def add_url(title, ds_id):
-        return f'<a href="{DS_URL_PREFIX}{ds_id}" target="_blank">{title}</a>'
-
-    ds_df["title"] = ds_df.apply(lambda x: add_url(x.title, x.id), axis=1)
+    def add_url(title, id):
+        return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
 
     def disp_pretty_df(df, index=True, header=True):
         try:
@@ -134,55 +110,73 @@ def ds_info(
                 "IPython not available. Pretty printing only works in Jupyter Notebooks."
             )
 
-    if ds_id:
-        single_dict = ds_df.loc[ds_df["id"] == ds_id].squeeze().to_dict()
-        single_df = pd.DataFrame(columns=["key", "value"])
-        for key, value in single_dict.items():
-            section = pd.DataFrame([{"key": f"<b>{key}</b>", "value": value}])
-            single_df = single_df.append(section, ignore_index=True)
-
+    if ds:
         if pretty:
-            disp_pretty_df(single_df, header=False, index=False)
+            pretty_df = select_ds_id(ds, df=ds_df)
+            pretty_df.loc[0, "title"] = pretty_df.apply(
+                lambda x: add_url(x.title, x.id), axis=1
+            ).squeeze()
+            disp_pretty_df(pretty_df.T, header=False)
 
         if output:
-            return ds_df.loc[ds_df["id"] == ds_id]
+            return select_ds_id(ds, df=ds_df)
 
     else:
         if pretty:
-            disp_pretty_df(ds_df)
+            pretty_df = ds_df.copy()
+            pretty_df["title"] = pretty_df.apply(
+                lambda x: add_url(x.title, x.id), axis=1
+            )
+            disp_pretty_df(pretty_df)
 
         if output:
             return ds_df
 
 
 def load_data(
-    ds_id: Optional[str] = None,
-    data_dir: Path = DATA_DIR,
-    additional_readers: dict = {},
+    ds: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
 ):
-    """Docstring goes here
+    """This function loads a single dataset into an AnnData object.
+    If there are multiple datasets available you need to specify one by setting
+    ``ds`` to a dataset `id` or dataset `title`.
+    To get an overview of availabe dataset use :py:func:`ds_info`
+
+    Parameters
+    ----------
+    ds : Optional[str], optional
+        A single dataset ID or dataset title to select a dataset to be loaded. If only one dataset is available you do not need to set this parameter, by default None
+    data_dir : Path, optional
+        Directory containing the datasets, e.g. ``fastgenomics/data``, by default DATA_DIR
+    additional_readers : dict, optional
+        Used to specify your own readers for the specific data set format. Still experimental, by default {}
+
+    Returns
+    -------
+    AnnData Object
+        A single AnnData object with dataset id in `obs` and all dataset metadata in `uns`
     """
-    ds_df = ds_info(data_dir=data_dir, pretty=False)
     readers = {**DEFAULT_READERS, **additional_readers}
 
-    if not ds_id:
+    if ds:
+        single_df = select_ds_id(ds, df=ds_info(data_dir=data_dir, pretty=False))
+    if not ds:
+        single_df = ds_info(data_dir=data_dir, pretty=False)
         assert (
-            len(ds_df) == 1
-        ), f"There is more than one dataset available. Please select one by its ID."
+            len(single_df) == 1
+        ), f"There is more than one dataset available. Please select one by its ID or title."
 
-        ds_id = ds_df.iloc[0]["id"]
-
-    format = ds_df.loc[ds_df["id"] == ds_id, ["format"]]
-    title = ds_df.loc[ds_df["id"] == ds_id, ["title"]]
-    path = ds_df.loc[ds_df["id"] == ds_id, ["path"]]
-    file = ds_df.loc[ds_df["id"] == ds_id, ["file"]]
+    title = single_df.loc[0, "title"]
+    ds_id = single_df.loc[0, "id"]
+    format = single_df.loc[0, "format"]
+    path = single_df.loc[0, "path"]
+    file = single_df.loc[0, "file"]
 
     if format in readers:
         logger.info(
             f'Loading dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](Path(path) / file)
-        adata.uns["metadata"] = {ds_id: ds_df.loc[ds_df["id"] == ds_id].to_dict()}
+        adata.uns["ds_metadata"] = {ds_id: single_df.loc[0].to_dict()}
         adata.obs["fg_id"] = ds_id
         n_genes = adata.shape[1]
         n_cells = adata.shape[0]
@@ -207,6 +201,56 @@ def load_data(
             f'Unsupported format "{format}", use one of {list(readers)} or implement your '
             f"own reading function.\nSee {BLOGURL} for more information."
         )
+
+
+def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
+    """Select a single dataset from a pandas DataFrame by its ID or title
+    
+    Parameters
+    ----------
+    ds : str
+        A single dataset ID or dataset title for selection
+    df : pd.DataFrame, optional
+        A pandas DataFrame from which a single entry is selected, by default None
+    
+    Returns
+    -------
+    pd.DataFrame
+        A pandas DataFrame with only the selected dataset.
+    """
+    single_df = df.loc[(df["id"] == id) | (df["title"] == id)].reset_index(drop=True)
+    len_df = len(single_df)
+    if len_df == 1:
+        return single_df.copy()
+    else:
+        if len_df > 1:
+            display(single_df)
+        raise KeyError(
+            f"Your selection matches {len_df} datasets. Please make sure to select exactly one."
+        )
+
+
+def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
+    """Gets available datasets for this analysis from path.
+    
+    Parameters
+    ----------
+    data_dir : Union[str,Path], optional
+        Directory containing the datasets, e.g. "fastgenomics/data", by default DATA_DIR
+    
+    Returns
+    -------
+    list
+        A list of dataset paths
+    """
+    data_dir = Path(data_dir)
+    paths = [
+        subdir
+        for subdir in sorted(data_dir.iterdir())
+        if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
+    ]
+    assert paths != [], "There is no data available in this analysis."
+    return paths
 
 
 def get_datasets(data_dir=DATA_DIR):
