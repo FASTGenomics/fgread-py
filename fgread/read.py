@@ -6,7 +6,10 @@ import pandas as pd
 import json
 from typing import Optional, Union
 import logging
+from deprecated import deprecated
+from get_version import get_version
 
+__version__ = get_version(__file__)
 
 # configure logging
 logger = logging.getLogger(__name__)
@@ -169,7 +172,7 @@ def load_data(
 
     if ds:
         single_df = select_ds_id(ds, df=ds_info(data_dir=data_dir, pretty=False))
-    if not ds:
+    else:
         single_df = ds_info(data_dir=data_dir, pretty=False)
         assert (
             len(single_df) == 1
@@ -263,6 +266,7 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     return paths
 
 
+@deprecated(version='0.3.1', reason="Please use the function `ds_info` or `load_data` instead.")
 def get_datasets(data_dir=DATA_DIR):
     """Gets all available datasets.  This is a convenience function used to gather all
     information specified in the FASTGenomics environment. The returned value can be
@@ -284,6 +288,7 @@ def get_datasets(data_dir=DATA_DIR):
     return datasets
 
 
+@deprecated(version='0.3.1', reason="Please use the function `load_data`instead.")
 def read_dataset(dataset: DataSet, additional_readers={}):
     """Reads a single dataset.  Dispatches to specific readers based on the value of
     the ``dataset.format``.
@@ -334,6 +339,7 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         )
 
 
+@deprecated(version='0.3.1', reason="Please use the function `load_data`instead.")
 def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
     """Reads all specified datasets and returns them as AnnData objects.  Internally uses
     :py:func:`read_dataset` to read the datasets.

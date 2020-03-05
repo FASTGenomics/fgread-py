@@ -16,7 +16,7 @@ requires=[
     "loompy ~= 3.0",
     "scanpy ~= 1.4.4",
     "pandas ~= 0.25",
-    "deprecation ~=2.0"
+    "deprecated ~=1.2"
 ]
 
 
