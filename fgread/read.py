@@ -87,6 +87,8 @@ def ds_info(
         "tissue",
         "numberOfCells",
         "numberOfGenes",
+        "path",
+        "file"
     ]
     col_names = ds_df.columns.values.tolist()
     col_names_sorted = [name for name in sort_order if name in col_names]
@@ -102,7 +104,7 @@ def ds_info(
             from IPython.display import display, Markdown
 
             df_html = df.to_html(
-                render_links=True, escape=False, header=header, index=index
+                render_links=True, escape=False, header=header, index=index, justify="left"
             )
             display(Markdown(df_html))
         except:
@@ -124,11 +126,17 @@ def ds_info(
     else:
         if pretty:
             pretty_df = ds_df.drop(
-                labels=["description, license, preprocessing"], errors="ignore"
+                labels=["description", "license", "preprocessing", "citation", "webLink"], axis=1, errors="ignore"
             )
             pretty_df["title"] = pretty_df.apply(
                 lambda x: add_url(x.title, x.id), axis=1
             )
+            pretty_df = pretty_df.rename(
+                columns={"numberOfCells": "#Cells",
+                         "numberOfGenes": "#Genes"
+                         }
+            )
+            pretty_df = pretty_df.astype({"#Cells": "int32", "#Genes": "int32"})
             disp_pretty_df(pretty_df)
 
         if output:
