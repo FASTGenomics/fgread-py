@@ -218,7 +218,7 @@ def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
     pd.DataFrame
         A pandas DataFrame with only the selected dataset.
     """
-    single_df = df.loc[(df["id"] == id) | (df["title"] == id)].reset_index(drop=True)
+    single_df = df.loc[(df["id"] == ds) | (df["title"] == ds)].reset_index(drop=True)
     len_df = len(single_df)
     if len_df == 1:
         return single_df.copy()
