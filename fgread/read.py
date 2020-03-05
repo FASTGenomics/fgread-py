@@ -124,7 +124,7 @@ def ds_info(
     else:
         if pretty:
             pretty_df = ds_df.drop(
-                labels=["description, license, preprocessing"], errors="ignore"
+                labels=["description", "license", "preprocessing"], errors="ignore"
             )
             pretty_df["title"] = pretty_df.apply(
                 lambda x: add_url(x.title, x.id), axis=1
