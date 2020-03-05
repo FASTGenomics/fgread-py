@@ -288,7 +288,7 @@ def get_datasets(data_dir=DATA_DIR):
     return datasets
 
 
-@deprecated(version='0.3.1', reason="Please use the function `load_data`instead.")
+@deprecated(version='0.3.1', reason="Please use the function `load_data` instead.")
 def read_dataset(dataset: DataSet, additional_readers={}):
     """Reads a single dataset.  Dispatches to specific readers based on the value of
     the ``dataset.format``.
@@ -339,7 +339,7 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         )
 
 
-@deprecated(version='0.3.1', reason="Please use the function `load_data`instead.")
+@deprecated(version='0.3.1', reason="Please use the function `load_data` instead.")
 def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
     """Reads all specified datasets and returns them as AnnData objects.  Internally uses
     :py:func:`read_dataset` to read the datasets.
