@@ -134,11 +134,6 @@ def ds_info(
             pretty_df["title"] = pretty_df.apply(
                 lambda x: add_url(x.title, x.id), axis=1
             )
-            pretty_df = pretty_df.rename(
-                columns={"numberOfCells": "#Cells",
-                         "numberOfGenes": "#Genes"
-                         }
-            )
             pretty_df = pretty_df.astype({"#Cells": "int32", "#Genes": "int32"})
             disp_pretty_df(pretty_df)
 
