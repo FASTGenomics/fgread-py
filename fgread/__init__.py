@@ -4,11 +4,11 @@
 # set blog url for readme
 import os
 try:
-    fgurl = os.environ['FG_URL'].split(":")[-2]
+    fgurl = os.environ['FG_URL'].rsplit(":",1)[0]
 except:
     fgurl = "https://beta.fastgenomics.org"
-BLOGURL = fgurl + "/blog_posts/readers/"
 DS_URL_PREFIX = fgurl + "/webclient/ui/#/datasets/detail-"
+BLOGURL = "https://www.fastgenomics.org/blog_posts/readers/"
 
 from .read import ds_info, load_data, get_datasets, read_dataset, read_datasets
 from get_version import get_version
