@@ -74,10 +74,10 @@ def ds_info(
     ds_df = pd.DataFrame()
     for ds_path in ds_paths:
         with open(ds_path / "dataset_info.json") as f:
-            ds_info = json.load(f)
-            ds_info["path"] = ds_path
-            _ = ds_info.pop("schemaVersion", None)
-        ds_df = ds_df.append(ds_info, ignore_index=True)
+            info_df = json.load(f)
+            info_df["path"] = ds_path
+            _ = info_df.pop("schemaVersion", None)
+        ds_df = ds_df.append(info_df, ignore_index=True)
 
     # sort colnames
     sort_order = [
