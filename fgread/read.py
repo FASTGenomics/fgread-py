@@ -6,10 +6,8 @@ import pandas as pd
 import json
 from typing import Optional, Union
 import logging
-from deprecated import deprecated
-from get_version import get_version
+from deprecated.sphinx import deprecated
 
-__version__ = get_version(__file__)
 
 # configure logging
 logger = logging.getLogger(__name__)
@@ -76,10 +74,10 @@ def ds_info(
     ds_df = pd.DataFrame()
     for ds_path in ds_paths:
         with open(ds_path / "dataset_info.json") as f:
-            ds_info = json.load(f)
-            ds_info["path"] = ds_path
-            _ = ds_info.pop("schemaVersion", None)
-        ds_df = ds_df.append(ds_info, ignore_index=True)
+            info_df = json.load(f)
+            info_df["path"] = ds_path
+            _ = info_df.pop("schemaVersion", None)
+        ds_df = ds_df.append(info_df, ignore_index=True)
 
     # sort colnames
     sort_order = [
@@ -91,7 +89,7 @@ def ds_info(
         "numberOfCells",
         "numberOfGenes",
         "path",
-        "file"
+        "file",
     ]
     col_names = ds_df.columns.values.tolist()
     col_names_sorted = [name for name in sort_order if name in col_names]
@@ -107,7 +105,11 @@ def ds_info(
             from IPython.display import display, Markdown
 
             df_html = df.to_html(
-                render_links=True, escape=False, header=header, index=index, justify="left"
+                render_links=True,
+                escape=False,
+                header=header,
+                index=index,
+                justify="left",
             )
             display(Markdown(df_html))
         except:
@@ -129,17 +131,22 @@ def ds_info(
     else:
         if pretty:
             pretty_df = ds_df.drop(
-                labels=["description", "license", "preprocessing", "citation", "webLink"], axis=1, errors="ignore"
+                labels=[
+                    "description",
+                    "license",
+                    "preprocessing",
+                    "citation",
+                    "webLink",
+                ],
+                axis=1,
+                errors="ignore",
             )
             pretty_df["title"] = pretty_df.apply(
                 lambda x: add_url(x.title, x.id), axis=1
             )
-            pretty_df = pretty_df.rename(
-                columns={"numberOfCells": "#Cells",
-                         "numberOfGenes": "#Genes"
-                         }
+            pretty_df = pretty_df.astype(
+                {"numberOfCells": "int32", "numberOfGenes": "int32"}
             )
-            pretty_df = pretty_df.astype({"#Cells": "int32", "#Genes": "int32"})
             disp_pretty_df(pretty_df)
 
         if output:
@@ -266,7 +273,11 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     return paths
 
 
-@deprecated(version='0.3.1', reason="Please use the function `ds_info` or `load_data` instead.")
+@deprecated(
+    version="0.3.1",
+    reason="Please use the function `ds_info` or `load_data` instead. This function will be removed in the future.",
+    category=FutureWarning,
+)
 def get_datasets(data_dir=DATA_DIR):
     """Gets all available datasets.  This is a convenience function used to gather all
     information specified in the FASTGenomics environment. The returned value can be
@@ -288,7 +299,11 @@ def get_datasets(data_dir=DATA_DIR):
     return datasets
 
 
-@deprecated(version='0.3.1', reason="Please use the function `load_data` instead.")
+@deprecated(
+    version="0.3.1",
+    reason="Please use the function `load_data` instead. This function will be removed in the future.",
+    category=FutureWarning,
+)
 def read_dataset(dataset: DataSet, additional_readers={}):
     """Reads a single dataset.  Dispatches to specific readers based on the value of
     the ``dataset.format``.
@@ -339,7 +354,11 @@ def read_dataset(dataset: DataSet, additional_readers={}):
         )
 
 
-@deprecated(version='0.3.1', reason="Please use the function `load_data` instead.")
+@deprecated(
+    version="0.3.1",
+    reason="Please use the function `load_data` instead. This function will be removed in the future.",
+    category=FutureWarning,
+)
 def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
     """Reads all specified datasets and returns them as AnnData objects.  Internally uses
     :py:func:`read_dataset` to read the datasets.

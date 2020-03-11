@@ -4,7 +4,7 @@
 # set blog url for readme
 import os
 try:
-    fgurl = os.environ['FG_URL'].split(":")[-2]
+    fgurl = os.environ['FG_URL'].rsplit(":",1)[0]
 except:
     fgurl = "https://beta.fastgenomics.org"
 DOCSURL = fgurl + "/docs/"
