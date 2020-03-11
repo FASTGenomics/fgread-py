@@ -7,7 +7,7 @@ try:
     fgurl = os.environ['FG_URL'].split(":")[-2]
 except:
     fgurl = "https://beta.fastgenomics.org"
-BLOGURL = fgurl + "/blog_posts/readers/"
+DOCSURL = fgurl + "/docs/"
 DS_URL_PREFIX = fgurl + "/webclient/ui/#/datasets/detail-"
 
 from .read import ds_info, load_data, get_datasets, read_dataset, read_datasets

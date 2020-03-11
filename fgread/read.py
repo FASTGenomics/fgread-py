@@ -1,4 +1,4 @@
-from . import readers, readers_old, BLOGURL, DS_URL_PREFIX
+from . import readers, readers_old, DOCSURL, DS_URL_PREFIX
 from .dataset import DataSet, DatasetDict
 import re
 from pathlib import Path
@@ -202,17 +202,17 @@ def load_data(
     elif format == "Other":
         raise NotImplementedError(
             f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '
-            f"unsupported by this module and have to be loaded manually.\nSee {BLOGURL} for more information."
+            f"unsupported by this module and have to be loaded manually.\nSee {DOCSURL} for more information."
         )
     elif format == "Not set":
         raise ValueError(
             f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '
-            f"its format in its details page, otherwise ask the dataset owner to do that.\nSee {BLOGURL} for more information."
+            f"its format in its details page, otherwise ask the dataset owner to do that.\nSee {DOCSURL} for more information."
         )
     else:
         raise KeyError(
             f'Unsupported format "{format}", use one of {list(readers)} or implement your '
-            f"own reading function.\nSee {BLOGURL} for more information."
+            f"own reading function.\nSee {DOCSURL} for more information."
         )
 
 
@@ -325,17 +325,17 @@ def read_dataset(dataset: DataSet, additional_readers={}):
     elif format == "Other":
         raise NotImplementedError(
             f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '
-            f"unsupported by this module and have to be loaded manually.\nSee {BLOGURL} for more information."
+            f"unsupported by this module and have to be loaded manually.\nSee {DOCSURL} for more information."
         )
     elif format == "Not set":
         raise ValueError(
             f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '
-            f"its format in its details page, otherwise ask the dataset owner to do that.\nSee {BLOGURL} for more information."
+            f"its format in its details page, otherwise ask the dataset owner to do that.\nSee {DOCSURL} for more information."
         )
     else:
         raise KeyError(
             f'Unsupported format "{format}", use one of {list(readers)} or implement your '
-            f"own reading function.\nSee {BLOGURL} for more information."
+            f"own reading function.\nSee {DOCSURL} for more information."
         )
 
 
@@ -373,5 +373,5 @@ def read_datasets(datasets=None, additional_readers={}, data_dir=DATA_DIR):
     else:
         raise TypeError(
             f'The type of "datasets" has to be a DatasetDict or a single DataSet. Use "fgread.get_datasets()" '
-            f"to create it.\nSee {BLOGURL} for more information."
+            f"to create it.\nSee {DOCSURL} for more information."
         )

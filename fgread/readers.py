@@ -5,7 +5,7 @@ import scipy.sparse as sp
 import scanpy as sc
 from pathlib import Path
 from .dataset import DataSet
-from . import BLOGURL
+from . import DOCSURL
 
 
 def read_loom_to_anndata(ds_file: Path):
@@ -19,7 +19,7 @@ def read_seurat_to_anndata(ds_file: Path):
     """Reads a dataset in the Seurat format into the AnnData format (not implemented)."""
 
     raise NotImplementedError(
-        f"Reading of Seurat files not implemented.\nSee {BLOGURL} for more information."
+        f"Reading of Seurat files not implemented.\nSee {DOCSURL} for more information."
     )
 
 
