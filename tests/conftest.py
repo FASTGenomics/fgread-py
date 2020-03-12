@@ -37,7 +37,7 @@ def data_dir():
 # a list of all datasets
 @pytest.fixture()
 def list_datasets(data_dir):
-    return fgread.get_datasets(data_dir)
+    return fgread.ds_info(data_dir=data_dir)
 
 
 # supported datasets
