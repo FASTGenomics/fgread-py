@@ -55,20 +55,13 @@ def dset_seurat():
     return DATASET_SEURAT
 
 
-# The other dataset
-@pytest.fixture
-def dset_other():
-    return fgread.load_data("Other dataset",
-                            data_dir=DATA_DIR)
-
-
 # The notset dataset
 @pytest.fixture
 def dset_notset():
     return DATASET_NOTSET
 
 
-# read json from AnnData dataset
+# read json from all datasets
 @pytest.fixture(params=DSETS)
 def json_dset(request):
     series = pd.read_json(str(DATA_DIR) + "/" + request.param + "/dataset_info.json",
