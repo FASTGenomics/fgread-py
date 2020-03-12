@@ -3,7 +3,7 @@ import fgread
 
 def test_other(data_dir):
     with pytest.raises(
-        NotImplementedError, match='The format of the dataset "Other dataset" is "Other".  '
+        NotImplementedError, match='The format of the dataset "Other dataset" is "Other". '
                                    'Datasets with the "Other" format are unsupported by '
                                    'this module and have to be loaded manually.\nSee '
                                    'https://beta.fastgenomics.org/docs/ for more information.'
