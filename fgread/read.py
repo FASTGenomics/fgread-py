@@ -8,14 +8,12 @@ from typing import Optional, Union
 import logging
 from deprecated.sphinx import deprecated
 
-
 # configure logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
 logger.addHandler(ch)
-
 
 DEFAULT_READERS_OLD = {
     "Loom": readers_old.read_loom_to_anndata,
@@ -41,12 +39,11 @@ DATA_DIR = Path("/fastgenomics/data")
 
 
 def ds_info(
-    ds: Optional[str] = None,
-    pretty: bool = True,
-    output: bool = True,
-    data_dir: Path = DATA_DIR,
+        ds: Optional[str] = None,
+        pretty: bool = True,
+        output: bool = True,
+        data_dir: Path = DATA_DIR,
 ) -> pd.DataFrame:
-
     """Get information on all available datasets in this analysis.
     
     Parameters
@@ -154,7 +151,7 @@ def ds_info(
 
 
 def load_data(
-    ds: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
+        ds: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
 ):
     """This function loads a single dataset into an AnnData object.
     If there are multiple datasets available you need to specify one by setting
@@ -182,7 +179,7 @@ def load_data(
     else:
         single_df = ds_info(data_dir=data_dir, pretty=False)
         assert (
-            len(single_df) == 1
+                len(single_df) == 1
         ), f"There is more than one dataset available. Please select one by its ID or title."
 
     title = single_df.loc[0, "title"]

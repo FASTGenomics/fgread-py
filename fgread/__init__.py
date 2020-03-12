@@ -3,8 +3,9 @@
 """Module for reading datasets shared on FASTGenomics"""
 # set blog url for readme
 import os
+
 try:
-    fgurl = os.environ['FG_URL'].rsplit(":",1)[0]
+    fgurl = os.environ['FG_URL'].rsplit(":", 1)[0]
 except:
     fgurl = "https://beta.fastgenomics.org"
 DOCSURL = fgurl + "/docs/"
