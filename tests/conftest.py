@@ -58,7 +58,8 @@ def dset_seurat():
 # The other dataset
 @pytest.fixture
 def dset_other():
-    return DATASET_OTHER
+    return fgread.load_data("Other dataset",
+                            data_dir=DATA_DIR)
 
 
 # The notset dataset
