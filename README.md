@@ -12,19 +12,19 @@ will let you list and load datasets for which the analysis was defined.
 [fg]: https://beta.fastgenomics.org/webclient/
 [fg_analysis]: https://beta.fastgenomics.org/webclient/searchPage/analyses
 
-# Documentation
+## Documentation
 
 For the general documentation on how to use the reader, please visit our FASTGenomics Documentation.
 
 For details on the available functions see the [API Documentation](https://fgread-py.readthedocs.io/en/stable/api.html).
 
-# Known issues
+## Known issues
 
 Please report the issues through [github][issues].
 
 [issues]: https://github.com/FASTGenomics/fgread-py/issues
 
-# Development and testing
+## Development and testing
 
 Clone the repository along with the test data by running
 
