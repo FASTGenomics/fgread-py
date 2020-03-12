@@ -1,15 +1,16 @@
-import fgread
+import os
 
 
-def test_list(data_dir):
-    dsets = fgread.ds_info()
-    assert dsets.shape()[0] == 11
+# test number of datasets
+def test_list(data_dir, list_datasets):
+    nfolders = len(os.listdir(data_dir))
+    assert list_datasets.shape[0] == nfolders
 
 
-def test_representation(list_datasets):
-    for dset in list_datasets.items():
-        rep = dset.__repr__()
-        assert "id:" in rep
-        assert "title:" in rep
-        assert "format:" in rep
-        assert "path:" in rep
+# test equality of metadata in json and list
+def test_representation(json_dset, list_datasets):
+    json_data = json_dset.drop("schemaVersion", axis=1)
+    title = json_data["title"].values[0]
+    list_data = list_datasets[list_datasets["title"] == title]
+    for col in json_data.columns:
+        assert list_data[col].values == json_data[col].values

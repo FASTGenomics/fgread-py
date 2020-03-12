@@ -1,10 +1,13 @@
 import pytest
+import pandas as pd
 from pathlib import Path
+import os
 
 import fgread
 
 HERE = Path(__file__).parent
 DATA_DIR = HERE / "data" / "all_datasets"
+DSETS = os.listdir(DATA_DIR)
 
 DATASETS = [
     dict(id=1, dim=(298, 16892), title="Loom dataset", format="Loom"),
@@ -62,3 +65,12 @@ def dset_other():
 @pytest.fixture
 def dset_notset():
     return DATASET_NOTSET
+
+
+# read json from AnnData dataset
+@pytest.fixture(params=DSETS)
+def json_dset(request):
+    series = pd.read_json(str(DATA_DIR) + "/" + request.param + "/dataset_info.json",
+                          typ="series")
+    df = series.to_frame().transpose()
+    return df
