@@ -339,7 +339,7 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
     elif format == "Other":
         raise NotImplementedError(
-            f'The format of the dataset "{title}" is "{format}".  Datasets with the "{format}" format are '
+            f'The format of the dataset "{title}" is "{format}". Datasets with the "{format}" format are '
             f"unsupported by this module and have to be loaded manually.\nSee {DOCSURL} for more information."
         )
     elif format == "Not set":
