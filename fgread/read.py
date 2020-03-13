@@ -119,6 +119,9 @@ def ds_info(
             )
 
     if ds:
+        if ds_df.empty:
+            raise ValueError("There are no datasets in your analysis")
+        
         if pretty:
             pretty_df = select_ds_id(ds, df=ds_df)
             pretty_df.loc[0, "title"] = pretty_df.apply(
