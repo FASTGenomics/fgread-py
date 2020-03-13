@@ -126,7 +126,7 @@ def ds_info(
             return select_ds_id(ds, df=ds_df)
 
     else:
-        if pretty:
+        if pretty and not ds_df.empty:
             pretty_df = ds_df.drop(
                 labels=[
                     "description",
