@@ -37,11 +37,10 @@ DEFAULT_READERS = {
 
 DATA_DIR = Path("/fastgenomics/data")
 
-
 def ds_info(
         ds: Optional[str] = None,
-        pretty: bool = True,
-        output: bool = True,
+        pretty: bool = None,
+        output: bool = None,
         data_dir: Path = DATA_DIR,
 ) -> pd.DataFrame:
     """Get information on all available datasets in this analysis.
@@ -62,6 +61,11 @@ def ds_info(
     pd.DataFrame
         A pandas DataFrame containing all, or a single dataset (depends on ``ds``)
     """
+    
+    if pretty is None:
+        pretty = ds is not None
+    if output is None:
+        output = ds is None
 
     if not pretty and not output:
         logger.warning(
