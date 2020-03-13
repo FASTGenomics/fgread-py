@@ -90,7 +90,7 @@ def ds_info(
     ]
     col_names = ds_df.columns.values.tolist()
     col_names_sorted = [name for name in sort_order if name in col_names]
-    [col_names.remove(name) for name in sort_order]
+    [col_names.remove(name) for name in sort_order if name in col_names]
     col_names_sorted.extend(col_names)
     ds_df = ds_df[col_names_sorted]
 
