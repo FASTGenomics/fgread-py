@@ -261,6 +261,12 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
         A list of dataset paths
     """
     data_dir = Path(data_dir)
+    if not data_dir.exists()
+        logger.warning(
+            'There are no datasets attached to this analysis.'
+        )
+        return []
+    
     paths = [
         subdir
         for subdir in sorted(data_dir.iterdir())
