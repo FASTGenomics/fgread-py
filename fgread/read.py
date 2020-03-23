@@ -37,11 +37,12 @@ DEFAULT_READERS = {
 
 DATA_DIR = Path("/fastgenomics/data")
 
+
 def ds_info(
-        ds: Optional[str] = None,
-        pretty: bool = None,
-        output: bool = None,
-        data_dir: Path = DATA_DIR,
+    ds: Optional[str] = None,
+    pretty: bool = None,
+    output: bool = None,
+    data_dir: Path = DATA_DIR,
 ) -> pd.DataFrame:
     """Get information on all available datasets in this analysis.
     
@@ -61,7 +62,7 @@ def ds_info(
     pd.DataFrame
         A pandas DataFrame containing all, or a single dataset (depends on ``ds``)
     """
-    
+
     if pretty is None:
         pretty = ds is not None
     if output is None:
@@ -121,7 +122,7 @@ def ds_info(
     if ds:
         if ds_df.empty:
             raise ValueError("There are no datasets in your analysis")
-        
+
         if pretty:
             pretty_df = select_ds_id(ds, df=ds_df)
             pretty_df.loc[0, "title"] = pretty_df.apply(
@@ -158,7 +159,7 @@ def ds_info(
 
 
 def load_data(
-        ds: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
+    ds: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
 ):
     """This function loads a single dataset into an AnnData object.
     If there are multiple datasets available you need to specify one by setting
@@ -186,7 +187,7 @@ def load_data(
     else:
         single_df = ds_info(data_dir=data_dir, pretty=False)
         assert (
-                len(single_df) == 1
+            len(single_df) == 1
         ), f"There is more than one dataset available. Please select one by its ID or title."
 
     title = single_df.loc[0, "title"]
@@ -269,11 +270,9 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     """
     data_dir = Path(data_dir)
     if not data_dir.exists():
-        logger.warning(
-            'There are no datasets attached to this analysis.'
-        )
+        logger.warning("There are no datasets attached to this analysis.")
         return []
-    
+
     paths = [
         subdir
         for subdir in sorted(data_dir.iterdir())
@@ -284,7 +283,7 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
 
 
 @deprecated(
-    version="0.3.1",
+    version="0.4.0",
     reason="Please use the function `ds_info` or `load_data` instead. This function will be removed in the future.",
     category=FutureWarning,
 )
@@ -310,7 +309,7 @@ def get_datasets(data_dir=DATA_DIR):
 
 
 @deprecated(
-    version="0.3.1",
+    version="0.4.0",
     reason="Please use the function `load_data` instead. This function will be removed in the future.",
     category=FutureWarning,
 )
@@ -365,7 +364,7 @@ def read_dataset(dataset: DataSet, additional_readers={}):
 
 
 @deprecated(
-    version="0.3.1",
+    version="0.4.0",
     reason="Please use the function `load_data` instead. This function will be removed in the future.",
     category=FutureWarning,
 )
