@@ -3,19 +3,18 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 import scanpy as sc
-from pathlib import Path
 from .dataset import DataSet
 from . import DOCSURL
 
 
-def read_loom_to_anndata(ds_file: Path):
+def read_loom_to_anndata(dataset: DataSet):
     """Reads a dataset in the loom format into the AnnData format."""
 
-    adata = anndata.read_loom(ds_file)
+    adata = anndata.read_loom(dataset.file)
     return adata
 
 
-def read_seurat_to_anndata(ds_file: Path):
+def read_seurat_to_anndata(dataset: DataSet):
     """Reads a dataset in the Seurat format into the AnnData format (not implemented)."""
 
     raise NotImplementedError(
@@ -23,44 +22,44 @@ def read_seurat_to_anndata(ds_file: Path):
     )
 
 
-def read_anndata_to_anndata(ds_file: Path):
+def read_anndata_to_anndata(dataset: DataSet):
     """Reads a dataset in the AnnData format into the AnnData format."""
 
-    adata = anndata.read_h5ad(ds_file)
+    adata = anndata.read_h5ad(dataset.file)
     return adata
 
 
-def read_10xhdf5_to_anndata(ds_file: Path):
+def read_10xhdf5_to_anndata(dataset: DataSet):
     """Reads a dataset in the 10x hdf5 format into the AnnData format."""
 
-    adata = sc.read_10x_h5(ds_file)
+    adata = sc.read_10x_h5(dataset.file)
     return adata
 
 
-def read_10xmtx_to_anndata(ds_file: Path):
+def read_10xmtx_to_anndata(dataset: DataSet):
     """Reads a dataset in the 10x mtx format into the AnnData format."""
 
-    adata = sc.read_10x_mtx(ds_file.parent)
+    adata = sc.read_10x_mtx(dataset.path)
     return adata
 
 
-def read_densetsv_to_anndata(ds_file: Path):
+def read_densetsv_to_anndata(dataset: DataSet):
     """Reads a dense text file in tsv format into the AnnData format."""
 
-    return read_densemat_to_anndata(ds_file, sep="\t")
+    return read_densemat_to_anndata(dataset, sep="\t")
 
 
-def read_densecsv_to_anndata(ds_file: Path):
+def read_densecsv_to_anndata(dataset: DataSet):
     """Reads a dense text file in csv format into the AnnData format."""
 
-    return read_densemat_to_anndata(ds_file, sep=",")
+    return read_densemat_to_anndata(dataset, sep=",")
 
 
-def read_densemat_to_anndata(ds_file: Path, sep=None):
+def read_densemat_to_anndata(dataset: DataSet, sep=None):
     """Helper function to read dense text files in tsv and csv format.
     The separator (tab or comma) is passed by the corresponding function."""
 
-    file = ds_file
+    file = dataset.file
 
     with open(file) as f:
         cells = f.readline().replace('"', "").split(sep)
