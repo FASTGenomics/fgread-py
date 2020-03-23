@@ -1,5 +1,6 @@
-anndata
-get_version
-tables
+anndata ~= 0.6
+get_version ~= 2.1
+tables ~= 3.6
 recommonmark
-scanpy
+scanpy ~= 1.4.4
+deprecated ~= 1.2
