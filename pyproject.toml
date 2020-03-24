@@ -15,8 +15,8 @@ requires=[
     "tables ~= 3.6",
     "loompy ~= 3.0",
     "scanpy ~= 1.4.4",
-    "pandas ~= 0.25",
-    "deprecated ~=1.2"
+    "pandas >= 0.25",
+    "deprecated >= 1.2"
 ]
 
 
