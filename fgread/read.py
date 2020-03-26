@@ -78,6 +78,8 @@ def ds_info(
         with open(ds_path / "dataset_info.json") as f:
             info_df = json.load(f)
             info_df["path"] = ds_path
+            info_df["numberOfDataFiles"] = len(info_df["expressionFileInfos"])
+            info_df["numberOfMetadataFiles"] = len(info_df["metadataFileInfos"])
             _ = info_df.pop("schemaVersion", None)
         ds_df = ds_df.append(info_df, ignore_index=True)
 
@@ -90,14 +92,22 @@ def ds_info(
         "tissue",
         "numberOfCells",
         "numberOfGenes",
-        "path",
-        "file",
+        "numberOfDataFiles",
+        "numberOfMetadataFiles",
+        "path"
     ]
     col_names = ds_df.columns.values.tolist()
     col_names_sorted = [name for name in sort_order if name in col_names]
     [col_names.remove(name) for name in sort_order if name in col_names]
     col_names_sorted.extend(col_names)
     ds_df = ds_df[col_names_sorted]
+
+    ds_df = ds_df.astype(
+        {"numberOfCells": "int32",
+         "numberOfGenes": "int32",
+         "numberOfDataFiles": "int32",
+         "numberOfMetadataFiles": "int32"}
+    )
 
     def add_url(title, id):
         return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
@@ -142,15 +152,15 @@ def ds_info(
                     "preprocessing",
                     "citation",
                     "webLink",
+                    "file",
+                    "expressionFileInfos",
+                    "metadataFileInfos"
                 ],
                 axis=1,
                 errors="ignore",
             )
             pretty_df["title"] = pretty_df.apply(
                 lambda x: add_url(x.title, x.id), axis=1
-            )
-            pretty_df = pretty_df.astype(
-                {"numberOfCells": "int32", "numberOfGenes": "int32"}
             )
             disp_pretty_df(pretty_df)
 
