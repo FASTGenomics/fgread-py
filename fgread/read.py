@@ -35,6 +35,16 @@ DEFAULT_READERS = {
     "comma-separated text": readers.read_densecsv_to_anndata,
 }
 
+FORMAT = {
+    "loom": "Loom",
+    "rds": "Seurat Object",
+    "h5ad": "AnnData",
+    "hdf5": "10x (hdf5)",
+    "mtx": "10x (mtx)",
+    "tsv": "tab-separated text",
+    "csv": "comma-separated text",
+}
+
 DATA_DIR = Path("/fastgenomics/data")
 
 
@@ -87,7 +97,6 @@ def ds_info(
     sort_order = [
         "title",
         "id",
-        "format",
         "organism",
         "tissue",
         "numberOfCells",
@@ -134,9 +143,9 @@ def ds_info(
             raise ValueError("There are no datasets in your analysis")
 
         for i, x in enumerate(ds_df["expressionFileInfos"][0]):
-            ds_df["DataFile-{:02d}".format(i+1)] = x["name"]
+            ds_df["dataFile-{:02d}".format(i+1)] = x["name"]
         for i, x in enumerate(ds_df["metadataFileInfos"][0]):
-            ds_df["MetadataFile-{:02d}".format(i+1)] = x["name"]
+            ds_df["metadataFile-{:02d}".format(i+1)] = x["name"]
         ds_df = ds_df.drop(
             labels=[
                 "expressionFileInfos",
@@ -215,9 +224,10 @@ def load_data(
 
     title = single_df.loc[0, "title"]
     ds_id = single_df.loc[0, "id"]
-    format = single_df.loc[0, "format"]
+    file = single_df.loc[0, "expressionFileInfos"][0]["name"]
+    suffix = file.split(".")[-1]
+    format = FORMAT[suffix]
     path = single_df.loc[0, "path"]
-    file = single_df.loc[0, "file"]
 
     if format in readers:
         logger.info(
