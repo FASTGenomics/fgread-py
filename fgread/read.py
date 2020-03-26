@@ -133,6 +133,9 @@ def ds_info(
         if ds_df.empty:
             raise ValueError("There are no datasets in your analysis")
 
+        ds_df["DataFiles"] = str([x["name"] for x in ds_df["expressionFileInfos"][0]])
+        ds_df["MetadataFiles"] = str([x["name"] for x in ds_df["metadataFileInfos"][0]])
+
         if pretty:
             pretty_df = select_ds_id(ds, df=ds_df)
             pretty_df.loc[0, "title"] = pretty_df.apply(
