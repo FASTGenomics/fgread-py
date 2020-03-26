@@ -133,8 +133,18 @@ def ds_info(
         if ds_df.empty:
             raise ValueError("There are no datasets in your analysis")
 
-        ds_df["DataFiles"] = str([x["name"] for x in ds_df["expressionFileInfos"][0]])
-        ds_df["MetadataFiles"] = str([x["name"] for x in ds_df["metadataFileInfos"][0]])
+        for i, x in enumerate(ds_df["expressionFileInfos"][0]):
+            ds_df["DataFile-{:02d}".format(i+1)] = x["name"]
+        for i, x in enumerate(ds_df["metadataFileInfos"][0]):
+            ds_df["MetadataFile-{:02d}".format(i+1)] = x["name"]
+        ds_df = ds_df.drop(
+            labels=[
+                "expressionFileInfos",
+                "metadataFileInfos"
+            ],
+            axis=1,
+            errors="ignore",
+        )
 
         if pretty:
             pretty_df = select_ds_id(ds, df=ds_df)
