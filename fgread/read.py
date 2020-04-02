@@ -1,12 +1,14 @@
-from . import readers, readers_old, DOCSURL, DS_URL_PREFIX
-from .dataset import DataSet, DatasetDict
+import json
+import logging
 import re
 from pathlib import Path
-import pandas as pd
-import json
 from typing import Optional, Union
-import logging
+
+import pandas as pd
 from deprecated.sphinx import deprecated
+
+from . import DOCSURL, DS_URL_PREFIX, readers, readers_old
+from .dataset import DataSet, DatasetDict
 
 # configure logging
 logger = logging.getLogger(__name__)
@@ -26,13 +28,12 @@ DEFAULT_READERS_OLD = {
 }
 
 DEFAULT_READERS = {
-    "Loom": readers.read_loom_to_anndata,
-    "Seurat Object": readers.read_seurat_to_anndata,
-    "AnnData": readers.read_anndata_to_anndata,
-    "10x (hdf5)": readers.read_10xhdf5_to_anndata,
-    "10x (mtx)": readers.read_10xmtx_to_anndata,
-    "tab-separated text": readers.read_densetsv_to_anndata,
-    "comma-separated text": readers.read_densecsv_to_anndata,
+    "loom": readers.read_loom_to_anndata,
+    "rds": readers.read_seurat_to_anndata,
+    "h5ad": readers.read_anndata_to_anndata,
+    "hdf5": readers.read_10xhdf5_to_anndata,
+    "tsv": readers.read_densetsv_to_anndata,
+    "csv": readers.read_densecsv_to_anndata,
 }
 
 FORMAT = {
@@ -40,7 +41,7 @@ FORMAT = {
     "rds": "Seurat Object",
     "h5ad": "AnnData",
     "hdf5": "10x (hdf5)",
-    "mtx": "10x (mtx)",
+    "h5": "10x (hdf5)",
     "tsv": "tab-separated text",
     "csv": "comma-separated text",
 }
@@ -88,8 +89,10 @@ def ds_info(
         with open(ds_path / "dataset_info.json") as f:
             info_df = json.load(f)
             info_df["path"] = ds_path
-            info_df["numberOfDataFiles"] = len(info_df["expressionFileInfos"])
-            info_df["numberOfMetadataFiles"] = len(info_df["metadataFileInfos"])
+            info_df["numberOfExpressionDataFiles"] = len(
+                info_df["expressionDataFileInfos"]
+            )
+            info_df["numberOfMetaDataFiles"] = len(info_df["metaDataFileInfos"])
             _ = info_df.pop("schemaVersion", None)
         ds_df = ds_df.append(info_df, ignore_index=True)
 
@@ -101,9 +104,13 @@ def ds_info(
         "tissue",
         "numberOfCells",
         "numberOfGenes",
-        "numberOfDataFiles",
-        "numberOfMetadataFiles",
-        "path"
+        "path",
+        "numberOfExpressionDataFiles",
+        "expressionDataFileNames",
+        "numberOfMetaDataFiles",
+        "metaDataFileNames",
+        "expressionDataFileInfos",
+        "metaDataFileInfos",
     ]
     col_names = ds_df.columns.values.tolist()
     col_names_sorted = [name for name in sort_order if name in col_names]
@@ -112,10 +119,12 @@ def ds_info(
     ds_df = ds_df[col_names_sorted]
 
     ds_df = ds_df.astype(
-        {"numberOfCells": "int32",
-         "numberOfGenes": "int32",
-         "numberOfDataFiles": "int32",
-         "numberOfMetadataFiles": "int32"}
+        {
+            "numberOfCells": "int32",
+            "numberOfGenes": "int32",
+            "numberOfExpressionDataFiles": "int32",
+            "numberOfMetaDataFiles": "int32",
+        }
     )
 
     def add_url(title, id):
@@ -130,7 +139,7 @@ def ds_info(
                 escape=False,
                 header=header,
                 index=index,
-                justify="left",
+                justify="center",
             )
             display(Markdown(df_html))
         except:
@@ -142,28 +151,56 @@ def ds_info(
         if ds_df.empty:
             raise ValueError("There are no datasets in your analysis")
 
-        for i, x in enumerate(ds_df["expressionFileInfos"][0]):
-            ds_df["dataFile-{:02d}".format(i+1)] = x["name"]
-        for i, x in enumerate(ds_df["metadataFileInfos"][0]):
-            ds_df["metadataFile-{:02d}".format(i+1)] = x["name"]
-        ds_df = ds_df.drop(
-            labels=[
-                "expressionFileInfos",
-                "metadataFileInfos"
-            ],
-            axis=1,
-            errors="ignore",
+        single_ds_df = select_ds_id(ds, df=ds_df)
+
+        single_ds_df["expressionDataFileNames"] = ", ".join(
+            [expr["name"] for expr in single_ds_df.loc[0, "expressionDataFileInfos"]]
         )
 
+        single_ds_df["metaDataFileNames"] = ", ".join(
+            [expr["name"] for expr in single_ds_df.loc[0, "metaDataFileInfos"]]
+        )
+
+        # Sort columns
+        single_col_names = single_ds_df.columns.values.tolist()
+        single_col_names_sorted = [
+            name for name in sort_order if name in single_col_names
+        ]
+        [
+            single_col_names.remove(name)
+            for name in sort_order
+            if name in single_col_names
+        ]
+        single_col_names_sorted.extend(single_col_names)
+        single_ds_df = single_ds_df[single_col_names_sorted]
+
         if pretty:
-            pretty_df = select_ds_id(ds, df=ds_df)
+            pretty_df = single_ds_df
+
+            pretty_df["expressionDataFileNames"] = "<br>".join(
+                [expr["name"] for expr in pretty_df.loc[0, "expressionDataFileInfos"]]
+            )
+
+            pretty_df["metaDataFileNames"] = ", ".join(
+                [expr["name"] for expr in pretty_df.loc[0, "metaDataFileInfos"]]
+            )
+
+            empty_cols = [
+                col for col in pretty_df.columns if pretty_df.loc[0, col] == ""
+            ]
+            pretty_df = pretty_df.drop(
+                labels=["expressionDataFileInfos", "metaDataFileInfos"] + empty_cols,
+                axis=1,
+                errors="ignore",
+            )
+
             pretty_df.loc[0, "title"] = pretty_df.apply(
                 lambda x: add_url(x.title, x.id), axis=1
             ).squeeze()
             disp_pretty_df(pretty_df.T, header=False)
 
         if output:
-            return select_ds_id(ds, df=ds_df)
+            return single_ds_df
 
     else:
         if pretty and not ds_df.empty:
@@ -175,8 +212,8 @@ def ds_info(
                     "citation",
                     "webLink",
                     "file",
-                    "expressionFileInfos",
-                    "metadataFileInfos"
+                    "expressionDataFileInfos",
+                    "metaDataFileInfos",
                 ],
                 axis=1,
                 errors="ignore",
@@ -201,16 +238,32 @@ def load_data(
     Parameters
     ----------
     ds : Optional[str], optional
-        A single dataset ID or dataset title to select a dataset to be loaded. If only one dataset is available you do not need to set this parameter, by default None
+        A single dataset ID or dataset title to select a dataset to be loaded.
+        If only one dataset is available you do not need to set this parameter, by default None
     data_dir : Path, optional
         Directory containing the datasets, e.g. ``fastgenomics/data``, by default DATA_DIR
     additional_readers : dict, optional
-        Used to specify your own readers for the specific data set format. Still experimental, by default {}
+        Used to specify your own readers for the specific data set format.
+        Dict key needs to be file extension (e.g., h5ad), dict value a function.
+        Still experimental, by default {}
 
     Returns
     -------
     AnnData Object
         A single AnnData object with dataset id in `obs` and all dataset metadata in `uns`
+    
+    Examples
+    --------
+    To use a custom reader for files with the extension ".fg", you have to define a function first:
+
+    >>> def my_loader(file):
+    ...     anndata = magic_file_loading(file)
+    ...     return anndata
+
+    You can then use this reader like this:
+    
+    >>> fgread.load_data("my_dataset", additional_readers={"fg": my_loader})
+
     """
     readers = {**DEFAULT_READERS, **additional_readers}
 
@@ -222,18 +275,51 @@ def load_data(
             len(single_df) == 1
         ), f"There is more than one dataset available. Please select one by its ID or title."
 
+    exp_count = single_df.loc[0, "numberOfExpressionDataFiles"]
+    meta_count = single_df.loc[0, "numberOfMetaDataFiles"]
+    if exp_count == 0:
+        raise TypeError(
+            f"There is no expression data available in this data set.\n"
+            f"Metadata files: {meta_count}."
+        )
+    elif exp_count >= 2:
+        raise TypeError(
+            f"There are {exp_count} expression data files and {meta_count} metadata files in this dataset. "
+            "Currently we only provide reading functionality for one expression data file and ignore meta data. "
+            "Please load the required data yourself."
+        )
+
     title = single_df.loc[0, "title"]
     ds_id = single_df.loc[0, "id"]
-    file = single_df.loc[0, "expressionFileInfos"][0]["name"]
-    suffix = file.split(".")[-1]
-    format = FORMAT[suffix]
+    file = single_df.loc[0, "expressionDataFileInfos"][0]["name"]
     path = single_df.loc[0, "path"]
 
-    if format in readers:
+    try:
+        _, suffix = file.rsplit(".", 1)
+    except ValueError as e:
+        raise ValueError(
+            f'The expression file "{file}" has no valid file ending.'
+        ).with_traceback(e.__traceback__)
+
+    try:
+        format = FORMAT[suffix]
+        logger.info(
+            f'Expression file "{file}" with format "{suffix}". Identified as "{format}"'
+        )
+    except KeyError:
+        format = suffix
+        logger.info(f'Expression file "{file}" with format "{format}".')
+
+    if suffix in readers:
+        if meta_count != 0:
+            logger.info(
+                f"There are {meta_count} metadata files in this dataset. "
+                "This data will not be integrated into the anndata object."
+            )
         logger.info(
             f'Loading dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
-        adata = readers[format](Path(path) / file)
+        adata = readers[suffix](Path(path) / file)
         adata.uns["ds_metadata"] = {ds_id: single_df.loc[0].to_dict()}
         adata.obs["fg_id"] = ds_id
         n_genes = adata.shape[1]
@@ -243,21 +329,10 @@ def load_data(
             f"==================================================================\n"
         )
         return adata
-
-    elif format == "Other":
-        raise NotImplementedError(
-            f'The format of the dataset "{title}" is "{format}". Datasets with the "{format}" format are '
-            f"unsupported by this module and have to be loaded manually.\nSee {DOCSURL} for more information."
-        )
-    elif format == "Not set":
-        raise ValueError(
-            f'The format of the dataset "{title}" was not defined. If you can modify the dataset please specify '
-            f"its format in its details page, otherwise ask the dataset owner to do that.\nSee {DOCSURL} for more information."
-        )
     else:
         raise KeyError(
-            f'Unsupported format "{format}", use one of {list(readers)} or implement your '
-            f"own reading function.\nSee {DOCSURL} for more information."
+            f'Unsupported file format "{suffix}", use one of {list(readers)} or implement your '
+            f"own reading function. See {DOCSURL} for more information."
         )
 
 
