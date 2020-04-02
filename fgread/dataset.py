@@ -20,6 +20,10 @@ class DataSet(object):
             raise FileNotFoundError(self.path)
 
         self.metadata = self.read_metadata()
+        assert self.metadata["schemaVersion"] == "1.0", (
+            "This function is not supported in FASTGenomics anymore (Dataset schemaVersion != 1.0). "
+            "Please use the function `ds_info` or `load_data` instead."
+        )
         self.format = self.metadata["format"]
         self.title = self.metadata["title"]
         self.file = self.path / self.metadata["file"]
