@@ -32,6 +32,7 @@ DEFAULT_READERS = {
     "rds": readers.read_seurat_to_anndata,
     "h5ad": readers.read_anndata_to_anndata,
     "hdf5": readers.read_10xhdf5_to_anndata,
+    "h5": readers.read_10xhdf5_to_anndata,
     "tsv": readers.read_densetsv_to_anndata,
     "csv": readers.read_densecsv_to_anndata,
 }
