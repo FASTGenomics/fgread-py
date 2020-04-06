@@ -37,15 +37,6 @@ DEFAULT_READERS = {
     "csv": readers.read_densecsv_to_anndata,
 }
 
-FORMAT = {
-    "loom": "Loom",
-    "rds": "Seurat Object",
-    "h5ad": "AnnData",
-    "hdf5": "10x (hdf5)",
-    "h5": "10x (hdf5)",
-    "tsv": "tab-separated text",
-    "csv": "comma-separated text",
-}
 
 DATA_DIR = Path("/fastgenomics/data")
 
@@ -296,22 +287,14 @@ def load_data(
     path = single_df.loc[0, "path"]
 
     try:
-        _, suffix = file.rsplit(".", 1)
+        _, format = file.rsplit(".", 1)
+        logger.info(f'Expression file "{file}" with format "{format}".')
     except ValueError as e:
         raise ValueError(
             f'The expression file "{file}" has no valid file ending.'
         ).with_traceback(e.__traceback__)
 
-    try:
-        format = FORMAT[suffix]
-        logger.info(
-            f'Expression file "{file}" with format "{suffix}". Identified as "{format}"'
-        )
-    except KeyError:
-        format = suffix
-        logger.info(f'Expression file "{file}" with format "{format}".')
-
-    if suffix in readers:
+    if format in readers:
         if meta_count != 0:
             logger.info(
                 f"There are {meta_count} metadata files in this dataset. "
@@ -320,7 +303,7 @@ def load_data(
         logger.info(
             f'Loading dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
-        adata = readers[suffix](Path(path) / file)
+        adata = readers[format](Path(path) / file)
         adata.uns["ds_metadata"] = {ds_id: single_df.loc[0].to_dict()}
         adata.obs["fg_id"] = ds_id
         n_genes = adata.shape[1]
@@ -332,7 +315,7 @@ def load_data(
         return adata
     else:
         raise KeyError(
-            f'Unsupported file format "{suffix}", use one of {list(readers)} or implement your '
+            f'Unsupported file format "{format}", use one of {list(readers)} or implement your '
             f"own reading function. See {DOCSURL} for more information."
         )
 
