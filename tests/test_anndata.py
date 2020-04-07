@@ -13,8 +13,15 @@ load_fail = {
 
 def test_read_anndata(data_dir, dset):
     title = dset["title"]
+    id = dset["id"]
     if title in load_fail:
         with pytest.raises(load_fail[title]["type"]):
             fgread.load_data(title, data_dir=data_dir)
     else:
-        pass
+        adata = fgread.load_data(title, data_dir=data_dir)
+        n_cells, n_genes = adata.X.shape
+
+        assert n_genes == dset["numberOfGenes"]
+        assert n_cells == dset["numberOfCells"]
+        assert adata.uns["ds_metadata"] == {id: dset.to_dict()}
+        assert adata.obs["fg_id"][0] == id
