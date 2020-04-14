@@ -220,7 +220,10 @@ def ds_info(
 
 
 def load_data(
-    ds: Optional[str] = None, data_dir: Path = DATA_DIR, additional_readers: dict = {}
+    ds: Optional[str] = None,
+    data_dir: Path = DATA_DIR,
+    additional_readers: dict = {},
+    as_format: Optional[str] = None,
 ):
     """This function loads a single dataset into an AnnData object.
     If there are multiple datasets available you need to specify one by setting
@@ -229,7 +232,7 @@ def load_data(
 
     Parameters
     ----------
-    ds : Optional[str], optional
+    ds : str, optional
         A single dataset ID or dataset title to select a dataset to be loaded.
         If only one dataset is available you do not need to set this parameter, by default None
     data_dir : Path, optional
@@ -238,6 +241,10 @@ def load_data(
         Used to specify your own readers for the specific data set format.
         Dict key needs to be file extension (e.g., h5ad), dict value a function.
         Still experimental, by default {}
+    as_format: str, optional
+        Specifies which reader should be uses for this dataset. Overwrites the auto-detection
+        of the format. Possible parameters are the file extensions of our supported data
+        formats: ``h5ad``, ``h5``, ``hdf5``, ``loom``, ``rds``, ``csv``, ``tsv``.
 
     Returns
     -------
@@ -286,13 +293,16 @@ def load_data(
     file = single_df.loc[0, "expressionDataFileInfos"][0]["name"]
     path = single_df.loc[0, "path"]
 
-    try:
-        _, format = file.rsplit(".", 1)
-        logger.info(f'Expression file "{file}" with format "{format}".')
-    except ValueError as e:
-        raise ValueError(
-            f'The expression file "{file}" has no valid file ending.'
-        ).with_traceback(e.__traceback__)
+    if as_format:
+        format = as_format.lower()
+    else:
+        try:
+            format = file.rsplit(".", 1)[1].lower()
+            logger.info(f'Expression file "{file}" with format "{format}".')
+        except ValueError as e:
+            raise ValueError(
+                f'The expression file "{file}" has no valid file ending.'
+            ).with_traceback(e.__traceback__)
 
     if format in readers:
         if meta_count != 0:
@@ -315,8 +325,9 @@ def load_data(
         return adata
     else:
         raise KeyError(
-            f'Unsupported file format "{format}", use one of {list(readers)} or implement your '
-            f"own reading function. See {DOCSURL} for more information."
+            f'Unsupported file format "{format}", use one of {list(readers)}. '
+            f'You can force the usage of a specific reader by setting "as_format" to a supported format. '
+            f"In addition, you can also implement your own reading function. See {DOCSURL} for more information."
         )
 
 
