@@ -4,7 +4,6 @@ import pandas as pd
 import scipy.sparse as sp
 import scanpy as sc
 from pathlib import Path
-from .dataset import DataSet
 from . import DOCSURL
 
 

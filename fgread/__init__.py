@@ -11,7 +11,7 @@ except:
 DOCSURL = fgurl + "/docs/"
 DS_URL_PREFIX = fgurl + "/webclient/ui/#/datasets/detail-"
 
-from .read import ds_info, load_data, get_datasets, read_dataset, read_datasets
+from .read import ds_info, load_data
 from get_version import get_version
 
 __version__ = get_version(__file__)
