@@ -69,7 +69,7 @@ def ds_info(
     for ds_path in ds_paths:
         with open(ds_path / "dataset_info.json") as f:
             info_df = json.load(f)
-            info_df["path"] = ds_path
+            info_df["path"] = str(ds_path)
             info_df["numberOfExpressionDataFiles"] = len(
                 info_df["expressionDataFileInfos"]
             )
@@ -366,7 +366,7 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
         return []
 
     paths = [
-        subdir
+        Path(subdir)
         for subdir in sorted(data_dir.iterdir())
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
