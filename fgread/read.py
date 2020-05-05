@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
-from deprecated.sphinx import deprecated
 
 from . import DOCSURL, DS_URL_PREFIX, readers
 
