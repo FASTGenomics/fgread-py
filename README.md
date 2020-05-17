@@ -14,7 +14,7 @@ will let you list and load datasets for which the analysis was defined.
 
 ## Documentation
 
-For the general documentation on how to use the reader, please visit our FASTGenomics Documentation.
+For the general documentation on how to use the reader, please visit our [FASTGenomics Documentation](https://beta.fastgenomics.org/docs/).
 
 For details on the available functions see the [API Documentation](https://fgread-py.readthedocs.io/en/stable/api.html).
 
