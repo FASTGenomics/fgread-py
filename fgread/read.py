@@ -63,6 +63,7 @@ def ds_info(
         logger.warning(
             'You have set "pretty" and "output" to false. Hence, this function will do/return nothing.'
         )
+
     ds_paths = get_ds_paths(data_dir=data_dir)
     ds_df = pd.DataFrame()
     for ds_path in ds_paths:
@@ -106,26 +107,6 @@ def ds_info(
             "numberOfMetaDataFiles": "int32",
         }
     )
-
-    def add_url(title, id):
-        return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
-
-    def disp_pretty_df(df, index=True, header=True):
-        try:
-            from IPython.display import display, Markdown
-
-            df_html = df.to_html(
-                render_links=True,
-                escape=False,
-                header=header,
-                index=index,
-                justify="center",
-            )
-            display(Markdown(df_html))
-        except:
-            logger.warning(
-                "IPython not available. Pretty printing only works in Jupyter Notebooks."
-            )
 
     if ds:
         if ds_df.empty:
@@ -205,6 +186,26 @@ def ds_info(
 
         if output:
             return ds_df
+
+    def add_url(title, id):
+        return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
+
+    def disp_pretty_df(df, index=True, header=True):
+        try:
+            from IPython.display import display, Markdown
+
+            df_html = df.to_html(
+                render_links=True,
+                escape=False,
+                header=header,
+                index=index,
+                justify="center",
+            )
+            display(Markdown(df_html))
+        except:
+            logger.warning(
+                "IPython not available. Pretty printing only works in Jupyter Notebooks."
+            )
 
 
 def load_data(
@@ -361,13 +362,17 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     """
     data_dir = Path(data_dir)
     if not data_dir.exists():
-        logger.warning("There are no datasets attached to this analysis.")
-        return []
+        raise FileNotFoundError(
+            f'There are no datasets attached to this analysis. Path "{data_dir}" is not existing.'
+        )
 
     paths = [
         Path(subdir)
         for subdir in sorted(data_dir.iterdir())
         if subdir.is_dir() and re.match(r"^dataset_\d{4}$", subdir.name)
     ]
-    assert paths != [], "There is no data available in this analysis."
+
+    if not paths:
+        raise RuntimeError("There are no datasets attached to this analysis.")
+
     return paths
