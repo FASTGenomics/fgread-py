@@ -64,7 +64,14 @@ def ds_info(
             'You have set "pretty" and "output" to false. Hence, this function will do/return nothing.'
         )
 
-    ds_paths = get_ds_paths(data_dir=data_dir)
+    try:
+        ds_paths = get_ds_paths(data_dir=data_dir)
+    except:
+        logger.warning(
+            "There are no datasets attached to this analysis."
+        )
+        return
+
     ds_df = pd.DataFrame()
     for ds_path in ds_paths:
         with open(ds_path / "dataset_info.json") as f:
