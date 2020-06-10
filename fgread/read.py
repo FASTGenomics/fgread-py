@@ -27,6 +27,70 @@ DEFAULT_READERS = {
 
 
 DATA_DIR = Path("/fastgenomics/data")
+DF_SORT_ORDER = [
+    "title",
+    "id",
+    "organism",
+    "tissue",
+    "numberOfCells",
+    "numberOfGenes",
+    "path",
+    "numberOfExpressionDataFiles",
+    "expressionDataFileNames",
+    "numberOfMetaDataFiles",
+    "metaDataFileNames",
+    "expressionDataFileInfos",
+    "metaDataFileInfos",
+]
+
+
+def get_datasets_df(data_dir: Path = DATA_DIR) -> pd.DataFrame:
+    """Constructs a :py:func:`pandas.DataFrame` from all available datasets.
+
+    Parameters
+    ----------
+    data_dir : Path, optional
+        Directory containing the datasets, e.g. ``fastgenomics/data``, by default DATA_DIR
+
+    Returns
+    -------
+    pd.DataFrame
+        A pandas DataFrame containing all available datasets
+    """
+
+    ds_paths = get_ds_paths(data_dir=data_dir)
+
+    ds_df = pd.DataFrame()
+    for ds_path in ds_paths:
+        with open(ds_path / "dataset_info.json") as f:
+            info_df = json.load(f)
+            info_df["path"] = str(ds_path)
+            info_df["numberOfExpressionDataFiles"] = len(
+                info_df["expressionDataFileInfos"]
+            )
+            info_df["numberOfMetaDataFiles"] = len(info_df["metaDataFileInfos"])
+            _ = info_df.pop("schemaVersion", None)
+        ds_df = ds_df.append(info_df, ignore_index=True)
+
+    # sort colnames
+
+    col_names = ds_df.columns.values.tolist()
+    col_names_sorted = [name for name in DF_SORT_ORDER if name in col_names]
+    [col_names.remove(name) for name in DF_SORT_ORDER if name in col_names]
+    col_names_sorted.extend(col_names)
+    ds_df = ds_df[col_names_sorted]
+
+    # Format types
+    ds_df = ds_df.astype(
+        {
+            "numberOfCells": "int32",
+            "numberOfGenes": "int32",
+            "numberOfExpressionDataFiles": "int32",
+            "numberOfMetaDataFiles": "int32",
+        }
+    )
+
+    return ds_df
 
 
 def ds_info(
@@ -63,55 +127,35 @@ def ds_info(
         logger.warning(
             'You have set "pretty" and "output" to false. Hence, this function will do/return nothing.'
         )
+        return
 
-    ds_paths = get_ds_paths(data_dir=data_dir)
-    ds_df = pd.DataFrame()
-    for ds_path in ds_paths:
-        with open(ds_path / "dataset_info.json") as f:
-            info_df = json.load(f)
-            info_df["path"] = str(ds_path)
-            info_df["numberOfExpressionDataFiles"] = len(
-                info_df["expressionDataFileInfos"]
+    try:
+        ds_df = get_datasets_df(data_dir=data_dir)
+    except NoDatasetsError as err:
+        logger.warning(err)
+        return pd.DataFrame()
+
+    def add_url(title, id):
+        return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
+
+    def disp_pretty_df(df, index=True, header=True):
+        try:
+            from IPython.display import display, Markdown
+
+            df_html = df.to_html(
+                render_links=True,
+                escape=False,
+                header=header,
+                index=index,
+                justify="center",
             )
-            info_df["numberOfMetaDataFiles"] = len(info_df["metaDataFileInfos"])
-            _ = info_df.pop("schemaVersion", None)
-        ds_df = ds_df.append(info_df, ignore_index=True)
-
-    # sort colnames
-    sort_order = [
-        "title",
-        "id",
-        "organism",
-        "tissue",
-        "numberOfCells",
-        "numberOfGenes",
-        "path",
-        "numberOfExpressionDataFiles",
-        "expressionDataFileNames",
-        "numberOfMetaDataFiles",
-        "metaDataFileNames",
-        "expressionDataFileInfos",
-        "metaDataFileInfos",
-    ]
-    col_names = ds_df.columns.values.tolist()
-    col_names_sorted = [name for name in sort_order if name in col_names]
-    [col_names.remove(name) for name in sort_order if name in col_names]
-    col_names_sorted.extend(col_names)
-    ds_df = ds_df[col_names_sorted]
-
-    ds_df = ds_df.astype(
-        {
-            "numberOfCells": "int32",
-            "numberOfGenes": "int32",
-            "numberOfExpressionDataFiles": "int32",
-            "numberOfMetaDataFiles": "int32",
-        }
-    )
+            display(Markdown(df_html))
+        except:
+            logger.warning(
+                "IPython not available. Pretty printing only works in Jupyter Notebooks."
+            )
 
     if ds:
-        if ds_df.empty:
-            raise ValueError("There are no datasets in your analysis")
-
         single_ds_df = select_ds_id(ds, df=ds_df)
 
         single_ds_df["expressionDataFileNames"] = ", ".join(
@@ -125,11 +169,11 @@ def ds_info(
         # Sort columns
         single_col_names = single_ds_df.columns.values.tolist()
         single_col_names_sorted = [
-            name for name in sort_order if name in single_col_names
+            name for name in DF_SORT_ORDER if name in single_col_names
         ]
         [
             single_col_names.remove(name)
-            for name in sort_order
+            for name in DF_SORT_ORDER
             if name in single_col_names
         ]
         single_col_names_sorted.extend(single_col_names)
@@ -164,7 +208,7 @@ def ds_info(
             return single_ds_df
 
     else:
-        if pretty and not ds_df.empty:
+        if pretty:
             pretty_df = ds_df.drop(
                 labels=[
                     "description",
@@ -186,26 +230,6 @@ def ds_info(
 
         if output:
             return ds_df
-
-    def add_url(title, id):
-        return f'<a href="{DS_URL_PREFIX}{id}" target="_blank">{title}</a>'
-
-    def disp_pretty_df(df, index=True, header=True):
-        try:
-            from IPython.display import display, Markdown
-
-            df_html = df.to_html(
-                render_links=True,
-                escape=False,
-                header=header,
-                index=index,
-                justify="center",
-            )
-            display(Markdown(df_html))
-        except:
-            logger.warning(
-                "IPython not available. Pretty printing only works in Jupyter Notebooks."
-            )
 
 
 def load_data(
@@ -256,12 +280,15 @@ def load_data(
     readers = {**DEFAULT_READERS, **additional_readers}
 
     if ds:
-        single_df = select_ds_id(ds, df=ds_info(data_dir=data_dir, pretty=False))
+        single_df = select_ds_id(ds, df=get_datasets_df(data_dir=data_dir))
     else:
-        single_df = ds_info(data_dir=data_dir, pretty=False)
-        assert (
-            len(single_df) == 1
-        ), f"There is more than one dataset available. Please select one by its ID or title."
+        single_df = get_datasets_df(data_dir=data_dir)
+        if len(single_df) > 1:
+            raise RuntimeError(
+                "There is more than one dataset available in this analysis. "
+                "Please select one by its ID or title. "
+                'You can list available datasets by using "fgread.ds_info()".'
+            )
 
     exp_count = single_df.loc[0, "numberOfExpressionDataFiles"]
     meta_count = single_df.loc[0, "numberOfMetaDataFiles"]
@@ -362,8 +389,8 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     """
     data_dir = Path(data_dir)
     if not data_dir.exists():
-        raise FileNotFoundError(
-            f'There are no datasets attached to this analysis. Path "{data_dir}" is not existing.'
+        raise NoDatasetsError(
+            f'There are no datasets attached to this analysis. Path "{data_dir}" does not exist.'
         )
 
     paths = [
@@ -373,6 +400,14 @@ def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     ]
 
     if not paths:
-        raise RuntimeError("There are no datasets attached to this analysis.")
+        raise NoDatasetsError(
+            f'There are no datasets attached to this analysis. Path "{data_dir}" is empty.'
+        )
 
     return paths
+
+
+class NoDatasetsError(Exception):
+    """Raised when no datasets are attached"""
+
+    pass
