@@ -319,7 +319,7 @@ def load_data(
         else:
             raise TypeError(
                 f"There are {exp_count} expression data files in this dataset. "
-                'Please specifiy which you want to load by setting "expression_file". '
+                'Please specify which one you want to load using the parameter "expression_file". '
                 f"Available expression files are: {exp_files}."
             )
 
@@ -345,7 +345,7 @@ def load_data(
                 "This data will not be integrated into the anndata object."
             )
         logger.info(
-            f'Loading file {file} from dataset "{title}" in format "{format}" from directory "{path}"...\n'
+            f'Loading file "{file}" from dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](Path(path) / file)
         adata.uns["ds_metadata"] = {ds_id: single_df.loc[0].to_dict()}
