@@ -236,6 +236,7 @@ def load_data(
     ds: Optional[str] = None,
     data_dir: Path = DATA_DIR,
     additional_readers: dict = {},
+    expression_file: Optional[str] = None,
     as_format: Optional[str] = None,
 ):
     """This function loads a single dataset into an AnnData object.
@@ -254,6 +255,9 @@ def load_data(
         Used to specify your own readers for the specific data set format.
         Dict key needs to be file extension (e.g., h5ad), dict value a function.
         Still experimental, by default {}
+    expression_file: str, Optional
+        The name of the expression file to load.
+        Only needed when there are multiple expression files in a dataset.
     as_format: str, optional
         Specifies which reader should be uses for this dataset. Overwrites the auto-detection
         of the format. Possible parameters are the file extensions of our supported data
@@ -292,21 +296,35 @@ def load_data(
 
     exp_count = single_df.loc[0, "numberOfExpressionDataFiles"]
     meta_count = single_df.loc[0, "numberOfMetaDataFiles"]
+
     if exp_count == 0:
         raise TypeError(
             f"There is no expression data available in this data set.\n"
             f"Metadata files: {meta_count}."
         )
-    elif exp_count >= 2:
-        raise TypeError(
-            f"There are {exp_count} expression data files and {meta_count} metadata files in this dataset. "
-            "Currently we only provide reading functionality for one expression data file and ignore meta data. "
-            "Please load the required data yourself."
-        )
+
+    exp_files = [exp["name"] for exp in single_df.loc[0, "expressionDataFileInfos"]]
+
+    if expression_file:
+        if expression_file in exp_files:
+            file = expression_file
+        else:
+            raise KeyError(
+                f"Expression file {expression_file} not found in dataset. "
+                f"Available expression files are: {exp_files}."
+            )
+    else:
+        if exp_count == 1:
+            file = single_df.loc[0, "expressionDataFileInfos"][0]["name"]
+        else:
+            raise TypeError(
+                f"There are {exp_count} expression data files in this dataset. "
+                'Please specifiy which you want to load by setting "expression_file". '
+                f"Available expression files are: {exp_files}."
+            )
 
     title = single_df.loc[0, "title"]
     ds_id = single_df.loc[0, "id"]
-    file = single_df.loc[0, "expressionDataFileInfos"][0]["name"]
     path = single_df.loc[0, "path"]
 
     if as_format:
@@ -327,7 +345,7 @@ def load_data(
                 "This data will not be integrated into the anndata object."
             )
         logger.info(
-            f'Loading dataset "{title}" in format "{format}" from directory "{path}"...\n'
+            f'Loading file {file} from dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](Path(path) / file)
         adata.uns["ds_metadata"] = {ds_id: single_df.loc[0].to_dict()}
