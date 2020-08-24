@@ -388,7 +388,7 @@ def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
     elif len_df == 0:
         add_err = ""
         if not ds.startswith("dataset-"):
-            add_err = " Please note, that dataset titles can be changed by the owner. To be safe, you might want to consider dataset IDs instead."
+            add_err = " Please note that dataset titles can be changed by the owner. To be safe, you might want to consider dataset IDs instead."
         raise KeyError("Your selection matches no datasets." + add_err)
     else:
         display(single_df)
