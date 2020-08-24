@@ -335,7 +335,7 @@ def load_data(
             logger.info(f'Expression file "{file}" with format "{format}".')
         except ValueError as e:
             raise ValueError(
-                f'The expression file "{file}" has no valid file ending.'
+                f'The expression file "{file}" has no valid file suffix.'
             ).with_traceback(e.__traceback__)
 
     if format in readers:
@@ -382,11 +382,16 @@ def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
     """
     single_df = df.loc[(df["id"] == ds) | (df["title"] == ds)].reset_index(drop=True)
     len_df = len(single_df)
+
     if len_df == 1:
         return single_df.copy()
+    elif len_df == 0:
+        add_err = ""
+        if not ds.startswith("dataset-"):
+            add_err = " Please note that dataset titles can be changed by the owner. To be safe, you might want to consider dataset IDs instead."
+        raise KeyError("Your selection matches no datasets." + add_err)
     else:
-        if len_df > 1:
-            display(single_df)
+        display(single_df)
         raise KeyError(
             f"Your selection matches {len_df} datasets. Please make sure to select exactly one."
         )
