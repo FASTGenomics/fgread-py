@@ -310,7 +310,7 @@ def load_data(
             file = expression_file
         else:
             raise KeyError(
-                f"Expression file "{expression_file}" not found in dataset. "
+                f'Expression file "{expression_file}" not found in dataset. '
                 f"Available expression files are: {exp_files}."
             )
     else:
