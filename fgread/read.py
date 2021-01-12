@@ -100,7 +100,7 @@ def ds_info(
     data_dir: Path = DATA_DIR,
 ) -> pd.DataFrame:
     """Get information on all available datasets in this analysis.
-    
+
     Parameters
     ----------
     ds : Optional[str], optional
@@ -111,7 +111,7 @@ def ds_info(
         Whether to return a DataFrame or not, by default True
     data_dir : Path, optional
         Directory containing the datasets, e.g. ``fastgenomics/data``, by default DATA_DIR
-    
+
     Returns
     -------
     pd.DataFrame
@@ -267,7 +267,7 @@ def load_data(
     -------
     AnnData Object
         A single AnnData object with dataset id in `obs` and all dataset metadata in `uns`
-    
+
     Examples
     --------
     To use a custom reader for files with the extension ".fg", you have to define a function first:
@@ -277,7 +277,7 @@ def load_data(
     ...     return anndata
 
     You can then use this reader like this:
-    
+
     >>> fgread.load_data("my_dataset", additional_readers={"fg": my_loader})
 
     """
@@ -327,6 +327,20 @@ def load_data(
     ds_id = single_df.loc[0, "id"]
     path = single_df.loc[0, "path"]
 
+    metadata_keys_delete = [
+        "state",
+        "expressionDataFileInfos",
+        "metaDataFileInfos",
+    ]  # These keys do not go into anndata.uns
+    metadata_dict = single_df.loc[0].to_dict()
+    for key in metadata_keys_delete:
+        try:
+            del metadata_dict[key]
+        except KeyError:
+            logger.warning(
+                f"Key {key} can not removed from metadata dict as it is not present."
+            )
+
     if as_format:
         format = as_format.lower()
     else:
@@ -348,7 +362,7 @@ def load_data(
             f'Loading file "{file}" from dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](Path(path) / file)
-        adata.uns["ds_metadata"] = {ds_id: single_df.loc[0].to_dict()}
+        adata.uns["ds_metadata"] = {ds_id: metadata_dict}
         adata.obs["fg_id"] = ds_id
         n_genes = adata.shape[1]
         n_cells = adata.shape[0]
@@ -367,14 +381,14 @@ def load_data(
 
 def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
     """Select a single dataset from a pandas DataFrame by its ID or title
-    
+
     Parameters
     ----------
     ds : str
         A single dataset ID or dataset title for selection
     df : pd.DataFrame, optional
         A pandas DataFrame from which a single entry is selected, by default None
-    
+
     Returns
     -------
     pd.DataFrame
@@ -399,12 +413,12 @@ def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
 
 def get_ds_paths(data_dir: Union[str, Path] = DATA_DIR) -> list:
     """Gets available datasets for this analysis from path.
-    
+
     Parameters
     ----------
     data_dir : Union[str,Path], optional
         Directory containing the datasets, e.g. "fastgenomics/data", by default DATA_DIR
-    
+
     Returns
     -------
     list
