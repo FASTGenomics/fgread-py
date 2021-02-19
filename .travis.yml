@@ -1,7 +1,7 @@
 language: python
 python: "3.8"
 os: linux
-dist: xenial
+dist: focal
 
 install:
   - pip install flit future-fstrings
