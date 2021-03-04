@@ -9,7 +9,7 @@ try:
 except:
     fgurl = "https://beta.fastgenomics.org"
 DOCSURL = fgurl + "/docs/"
-DS_URL_PREFIX = fgurl + "/webclient/ui/#/datasets/detail-"
+DS_URL_PREFIX = fgurl + "/datasets/detail-"
 
 from .read import ds_info, load_data
 from get_version import get_version
