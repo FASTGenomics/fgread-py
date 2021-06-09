@@ -23,5 +23,6 @@ def test_read_anndata(data_dir, dset):
 
         assert n_genes == dset["numberOfGenes"]
         assert n_cells == dset["numberOfCells"]
-        assert adata.uns["ds_metadata"] == {id: dset.to_dict()}
+        assert adata.uns["ds_metadata"] == {id: {"title": title}}
+        assert adata.uns["ds_metadata_raw"] == {id: str(dset.to_dict())}
         assert adata.obs["fg_id"][0] == id

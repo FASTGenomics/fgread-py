@@ -20,16 +20,7 @@ def data_dir():
 
 @pytest.fixture(params=list(range(N_DATASETS)))
 def dset(request):
-    metadata_keys_delete = [
-        "state",
-        "expressionDataFileInfos",
-        "metaDataFileInfos",
-    ]  # These keys do not go into anndata.uns
-
-    dataset = DATASETS.loc[request.param]
-    dataset.drop(metadata_keys_delete, inplace=True, errors="ignore")
-
-    return dataset
+    return DATASETS.loc[request.param]
 
 
 # read json from all datasets

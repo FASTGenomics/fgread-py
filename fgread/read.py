@@ -159,7 +159,10 @@ def ds_info(
         single_ds_df = select_ds_id(ds, df=ds_df)
 
         single_ds_df["expressionDataFileNames"] = ", ".join(
-            [expr["name"] for expr in single_ds_df.loc[0, "expressionDataFileInfos"]]
+            [
+                expr["name"]
+                for expr in single_ds_df.loc[0, "expressionDataFileInfos"]
+            ]
         )
 
         single_ds_df["metaDataFileNames"] = ", ".join(
@@ -183,7 +186,10 @@ def ds_info(
             pretty_df = single_ds_df
 
             pretty_df["expressionDataFileNames"] = "<br>".join(
-                [expr["name"] for expr in pretty_df.loc[0, "expressionDataFileInfos"]]
+                [
+                    expr["name"]
+                    for expr in pretty_df.loc[0, "expressionDataFileInfos"]
+                ]
             )
 
             pretty_df["metaDataFileNames"] = ", ".join(
@@ -194,7 +200,8 @@ def ds_info(
                 col for col in pretty_df.columns if pretty_df.loc[0, col] == ""
             ]
             pretty_df = pretty_df.drop(
-                labels=["expressionDataFileInfos", "metaDataFileInfos"] + empty_cols,
+                labels=["expressionDataFileInfos", "metaDataFileInfos"]
+                + empty_cols,
                 axis=1,
                 errors="ignore",
             )
@@ -303,7 +310,9 @@ def load_data(
             f"Metadata files: {meta_count}."
         )
 
-    exp_files = [exp["name"] for exp in single_df.loc[0, "expressionDataFileInfos"]]
+    exp_files = [
+        exp["name"] for exp in single_df.loc[0, "expressionDataFileInfos"]
+    ]
 
     if expression_file:
         if expression_file in exp_files:
@@ -327,19 +336,7 @@ def load_data(
     ds_id = single_df.loc[0, "id"]
     path = single_df.loc[0, "path"]
 
-    metadata_keys_delete = [
-        "state",
-        "expressionDataFileInfos",
-        "metaDataFileInfos",
-    ]  # These keys do not go into anndata.uns
     metadata_dict = single_df.loc[0].to_dict()
-    for key in metadata_keys_delete:
-        try:
-            del metadata_dict[key]
-        except KeyError:
-            logger.warning(
-                f"Key {key} can not removed from metadata dict as it is not present."
-            )
 
     if as_format:
         format = as_format.lower()
@@ -362,7 +359,8 @@ def load_data(
             f'Loading file "{file}" from dataset "{title}" in format "{format}" from directory "{path}"...\n'
         )
         adata = readers[format](Path(path) / file)
-        adata.uns["ds_metadata"] = {ds_id: metadata_dict}
+        adata.uns["ds_metadata"] = {ds_id: {"title": title}}
+        adata.uns["ds_metadata_raw"] = {ds_id: str(metadata_dict)}
         adata.obs["fg_id"] = ds_id
         n_genes = adata.shape[1]
         n_cells = adata.shape[0]
@@ -394,7 +392,9 @@ def select_ds_id(ds: str, df: pd.DataFrame = None) -> pd.DataFrame:
     pd.DataFrame
         A pandas DataFrame with only the selected dataset.
     """
-    single_df = df.loc[(df["id"] == ds) | (df["title"] == ds)].reset_index(drop=True)
+    single_df = df.loc[(df["id"] == ds) | (df["title"] == ds)].reset_index(
+        drop=True
+    )
     len_df = len(single_df)
 
     if len_df == 1:
