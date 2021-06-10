@@ -17,11 +17,11 @@ classifiers=[
 ]
 requires-python = '~=3.6'
 requires=[
-    "anndata ~= 0.6",
+    "anndata == 0.7.5", #TODO: Unpin, 0.7.6 not working b/c of "within_flit()" -> https://github.com/theislab/anndata/issues/573
     'get_version ~=2.1',
     "tables ~= 3.6",
     "loompy ~= 3.0",
-    "scanpy ~= 1.4",
+    "scanpy ~= 1.7",
     "pandas >= 0.25"
 ]
 
