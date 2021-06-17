@@ -1,9 +1,16 @@
 # coding: utf-8
 
 """Module for reading datasets shared on FASTGenomics"""
-# set blog url for readme
 import os
+from .helpers import within_flit
+from get_version import get_version
 
+__version__ = get_version(__file__)
+__author__ = "FASTGenomics"
+
+del get_version
+
+# set blog url for readme
 try:
     fgurl = os.environ["FG_URL"].rsplit(":", 1)[0]
 except:
@@ -11,10 +18,5 @@ except:
 DOCSURL = fgurl + "/docs/"
 DS_URL_PREFIX = fgurl + "/datasets/detail-"
 
-from .read import ds_info, load_data
-from get_version import get_version
-
-__version__ = get_version(__file__)
-__author__ = "FASTGenomics"
-
-del get_version
+if not within_flit():
+    from .read import ds_info, load_data
